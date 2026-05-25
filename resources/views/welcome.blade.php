@@ -60,7 +60,7 @@
             </div>
         </div>
 
-        <footer class="absolute bottom-6 text-xs tracking-[0.12em] text-ink-soft">johngu.io</footer>
+        <footer class="absolute bottom-6 text-xs tracking-[0.12em] text-ink-soft">Created by John Gu</footer>
     </main>
 </body>
 </html>
