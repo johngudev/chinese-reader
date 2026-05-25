@@ -20,7 +20,7 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', function () {
-    return redirect('/generate');
+    return redirect('/characters');
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
