@@ -23,8 +23,9 @@
                         {{ preg_match_all('/\p{Han}/u', $story) }} Chinese characters are in this text.
                     </span>
                     <a href="{{ url('/generate') }}"
+                        onclick="document.getElementById('loading-modal').classList.remove('hidden')"
                        class="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                        生成新故事 · Generate another
+                        生成新故事 · Generate another text
                     </a>
                 </div>
 
