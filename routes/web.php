@@ -78,7 +78,7 @@ Route::get('/generate', function () {
     ]);
 
     return view('story', ['story' => ($response->json('content.0.text')) ]);
-})->middleware('auth')->name('generate');;
+})->middleware('auth', 'throttle:5,1440')->name('generate');  // 50 generations per user per 24h;
 
 // Show the form (pre-filled with their current list)
 Route::get('/characters', function () {
