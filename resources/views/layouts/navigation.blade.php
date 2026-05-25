@@ -15,6 +15,12 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('generate')" :active="request()->routeIs('generate')">
+                        {{ __('Generate') }}
+                    </x-nav-link>
+                    <x-nav-link :href="route('characters')" :active="request()->routeIs('characters')">
+                        {{ __('Characters') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -70,6 +76,12 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('generate')" :active="request()->routeIs('generate')">
+                {{ __('Generate') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('characters')" :active="request()->routeIs('characters')">
+                {{ __('Characters') }}
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
@@ -97,4 +109,4 @@
             </div>
         </div>
     </div>
-</nav>
+</nav> 
