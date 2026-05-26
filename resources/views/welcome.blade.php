@@ -3,6 +3,23 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Open Graph (Facebook, iMessage, Slack, Discord, LinkedIn, WhatsApp…) -->
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="识字 · Chinese Reader">
+    <meta property="og:url" content="https://letsreadchinese.com">
+    <meta property="og:title" content="识字 · Chinese Reader">
+    <meta property="og:description" content="Read short Chinese texts written from only the characters you know — try it free, no account needed.">
+    <meta property="og:image" content="https://letsreadchinese.com/og-image.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <!-- Twitter / X -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="识字 · Chinese Reader">
+    <meta name="twitter:description" content="Read short Chinese texts written from only the characters you know.">
+    <meta name="twitter:image" content="https://letsreadchinese.com/og-image.png">
+
     <title>识字 · Chinese Reader</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
