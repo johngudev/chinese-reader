@@ -151,8 +151,8 @@
                             class="mt-3 block w-full rounded-lg border-gray-300 font-serifsc text-lg leading-relaxed focus:border-seal focus:ring-seal"
                             placeholder="你好我是中国人…">{{ implode(' ', $characters) }}</textarea>
 
-                        <div class="my-4 flex items-center justify-between">
-                            <span class="text-sm text-gray-500">
+                        <div class="my-4 flex items-center justify-center md:justify-between">
+                            <span class="text-sm text-gray-500 hidden md:inline">
                                 Currently using: {{ count($characters) }} characters
                             </span>
 
