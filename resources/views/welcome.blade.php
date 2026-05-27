@@ -90,11 +90,11 @@
                 <span class="absolute -right-4 top-2 h-3 w-3 rotate-45 rounded-sm bg-seal"></span>
             </h1>
 
-            <p class="mt-4 text-sm uppercase tracking-[0.36em] text-ink-soft">Chinese Reader</p>
+            <p class="mt-4 text-sm uppercase tracking-[0.36em] text-ink-soft">Let's Read Chinese!</p>
 
             <p class="mx-auto mt-7 max-w-md text-lg leading-relaxed text-ink-soft">
-                Stories woven entirely from the characters you already know —
-                and a single tap to take on the next one.
+                Practice reading Chinese with customized texts —
+                only read the characters you know.
             </p>
 
             <div class="mt-10 flex flex-wrap justify-center gap-4">
