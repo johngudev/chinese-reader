@@ -20,7 +20,7 @@
     <meta name="twitter:description" content="Read short Chinese texts written from only the characters you know.">
     <meta name="twitter:image" content="https://letsreadchinese.com/og-image.png">
 
-    <title>识字 · Chinese Reader</title>
+    <title>识字 · Let's Read Chinese!</title>
 
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css2?family=Noto+Serif+SC:wght@400;600;700&display=swap" rel="stylesheet">
