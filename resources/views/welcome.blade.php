@@ -6,7 +6,7 @@
 
     <!-- Open Graph (Facebook, iMessage, Slack, Discord, LinkedIn, WhatsApp…) -->
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="识字 · Chinese Reader">
+    <meta property="og:site_name" content="识字 · Let's Read Chinese!">
     <meta property="og:url" content="https://letsreadchinese.com">
     <meta property="og:title" content="识字 · Chinese Reader">
     <meta property="og:description" content="Read short Chinese texts written from only the characters you know — try it free, no account needed.">
