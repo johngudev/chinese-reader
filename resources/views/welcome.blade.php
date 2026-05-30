@@ -183,12 +183,7 @@
 
                 </div>
                 @else
-                <article class="overflow-y-auto px-8 py-10 sm:px-12 sm:py-14 bg-white">
-                        <p class="whitespace-pre-line text-2xl leading-loose tracking-wide text-gray-900"
-                        style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
-                            {{ $story }}
-                        </p>
-                </article>
+                <x-chinese-passage-article :story="$story" />
                 @endif
             </div>
         </div>

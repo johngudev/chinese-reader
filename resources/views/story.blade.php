@@ -10,12 +10,10 @@
             <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100">
 
                 {{-- Reading area --}}
-                <article class="px-8 py-10 sm:px-12 sm:py-14">
-                    <p class="whitespace-pre-line text-2xl leading-loose tracking-wide text-gray-900"
-                       style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
-                        {{ $story }}
-                    </p>
-                </article>
+ 
+
+                <x-chinese-passage-article :story="$story" />
+
 
                 {{-- Footer / actions --}}
                 <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-8 py-4 sm:px-12">
