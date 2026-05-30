@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +15,12 @@ use Illuminate\Support\Facades\Http;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::get('users', function () {
+    abort_unless(auth()->id() === 1, 403);
+
+    return User::all();
+})->middleware(['auth', 'verified']);
 
 Route::get('/', function () {
     return view('welcome', ['story' => session('story')]);
