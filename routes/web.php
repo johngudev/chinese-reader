@@ -61,6 +61,10 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
+Route::get('/story', function () {
+    return view('story');
+})->middleware('auth')->name('generate');
+
 Route::get('/generate', function () {
     $user       = auth()->user();
     $characters = $user->charactersList?->characters_list ?? [];
@@ -85,7 +89,7 @@ Route::get('/generate', function () {
     ]);
 
     return view('story', ['story' => ($response->json('content.0.text')) ]);
-})->middleware('auth', 'throttle:50,1440')->name('generate');  // 50 generations per user per 24h;
+})->middleware('auth', 'throttle:50,1440');  // 50 generations per user per 24h;
 
 // Show the form (pre-filled with their current list)
 Route::get('/characters', function () {
