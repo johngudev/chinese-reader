@@ -34,6 +34,10 @@ Route::post('/', function () {
 
     $charList = implode(' ', $characters);
 
+
+    //throttle request to max first 1,0000 characters
+    $charList = array_slice($charList, 1000);
+
     $response = Http::withHeaders([
         'x-api-key'         => env('X_API_KEY'),
         'anthropic-version' => '2023-06-01',
@@ -74,6 +78,10 @@ Route::get('/generate', function () {
     }
 
     $charList = implode(' ', $characters);
+
+    //throttle request to max first 1,0000 characters
+    $charList = array_slice($charList, 1000);
+
 
     $response = Http::withHeaders([
         'x-api-key'         => env('X_API_KEY'),
