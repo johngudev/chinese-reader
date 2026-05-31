@@ -76,6 +76,17 @@
         '首', '医', '局', '突', '专', '费', '号', '尽', '另', '周', '较', '注', '语', '仅', '考',
         '落', '青', '随', '选', '列',
         ];    
+
+    $vocabLists = [
+        ['vocab_list_name' => 'Top 100 Most Common Characters',      'characters' => array_slice($characters, 0, 100)],
+        ['vocab_list_name' => 'Top 250 Most Common Characters',      'characters' => array_slice($characters, 0, 250)],
+        ['vocab_list_name' => '(Old) HSK Level 1',                   'characters' => [ /* TODO: fill in */ ]],
+        ['vocab_list_name' => '(Old) HSK Level 2',                   'characters' => [ /* TODO: cumulative, incl. HSK 1 */ ]],
+        ['vocab_list_name' => '(Old) HSK Level 3',                   'characters' => [ /* TODO: cumulative, incl. HSK 1–2 */ ]],
+        ['vocab_list_name' => 'New Practical Chinese Reader Vol. 1', 'characters' => [ /* TODO: fill in */ ]],
+        ['vocab_list_name' => 'New Practical Chinese Reader Vol. 2', 'characters' => [ /* TODO: cumulative, incl. Vol. 1 */ ]],
+    ];
+
     @endphp
 
 <body class="antialiased">
