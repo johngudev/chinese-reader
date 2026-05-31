@@ -31,7 +31,7 @@ Route::post('/', function () {
 
     // Dedupe and re-index so it stays a clean JSON array
     $characters = array_values(array_unique($matches[0]));
-    $characters = array_slice($characters, 1000);
+    $characters = array_slice($characters,0,1000);
 
 
     $charList = implode(' ', $characters);
@@ -79,7 +79,8 @@ Route::get('/generate', function () {
     }
 
     //throttle request to max first 1,0000 characters
-    $characters = array_slice($characters, 1000);
+    // $characters = array_slice($characters, 1000);
+    $characters = array_slice($characters,0,1000);
 
     $charList = implode(' ', $characters);
 
