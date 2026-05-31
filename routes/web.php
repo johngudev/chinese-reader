@@ -31,12 +31,13 @@ Route::post('/', function () {
 
     // Dedupe and re-index so it stays a clean JSON array
     $characters = array_values(array_unique($matches[0]));
+    $characters = array_slice($characters, 1000);
+
 
     $charList = implode(' ', $characters);
 
 
     //throttle request to max first 1,0000 characters
-    $charList = array_slice($charList, 1000);
 
     $response = Http::withHeaders([
         'x-api-key'         => env('X_API_KEY'),
@@ -77,10 +78,11 @@ Route::get('/generate', function () {
         return response('Your character library is empty — add some first.');
     }
 
+    //throttle request to max first 1,0000 characters
+    $characters = array_slice($characters, 1000);
+
     $charList = implode(' ', $characters);
 
-    //throttle request to max first 1,0000 characters
-    $charList = array_slice($charList, 1000);
 
 
     $response = Http::withHeaders([
