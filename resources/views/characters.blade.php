@@ -6,7 +6,7 @@
     </x-slot>
 
     <div class="py-12">
-        <div class="mx-auto max-w-3xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-3xl px-1 sm:px-6 lg:px-8">
             <div class="overflow-hidden rounded-2xl bg-white p-8 shadow-sm ring-1 ring-gray-100">
 
                 @if (session('status'))
