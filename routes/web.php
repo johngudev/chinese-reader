@@ -214,4 +214,7 @@ Route::post('/characters', function () {
         ->with('status', count($characters) . ' characters saved.');
 })->middleware('auth');
 
+// Privacy policy
+Route::view('/privacy', 'privacy')->name('privacy');
+
 require __DIR__.'/auth.php';

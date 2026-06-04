@@ -329,7 +329,11 @@
         @endif
 
         {{-- Footer --}}
-        <footer class="absolute bottom-6 text-xs tracking-[0.12em] text-ink-soft">Created by John Gu</footer>
+        <footer class="absolute bottom-6 text-xs tracking-[0.12em] text-ink-soft">
+            Created by John Gu
+            <span class="mx-1.5" aria-hidden="true">·</span>
+            <a href="{{ route('privacy') }}" class="underline decoration-line underline-offset-4 transition hover:text-seal">Privacy Policy</a>
+        </footer>
     </main>
 
     <script>
