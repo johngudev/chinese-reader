@@ -23,6 +23,9 @@ Route::get('users', function () {
 })->middleware(['auth', 'verified']);
 
 Route::get('/', function () {
+
+    
+
     return view('welcome', ['story' => session('story')]);
 });
 
@@ -43,7 +46,40 @@ Route::post('/', function () {
         $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
     }
 
+    // Diversity for HSK4
+    if ((count($characters) > 1000)) {
+        $subvocab_ratio = 0.7;
+
+        $char_cutoff_index = round($subvocab_ratio * 1000);
+
+        $freq_chars = (config('vocab.characters'));
+
+        $simpler_chars = array_slice($freq_chars,0,$char_cutoff_index);
+
+        $difficult_chars = array_values(array_diff($characters, $simpler_chars));
+
+        $keys_diff_char_sample = array_rand($difficult_chars, 100);
+
+        $diff_char_sample = array_map(
+            fn($k) => $difficult_chars[$k],
+            $keys_diff_char_sample
+        );
+
+        $diff_char_sample_string = implode(' ', $diff_char_sample);
+
+        $char_diversity_note = $char_diversity_note . " Focus on using the more difficult characters I know, such as ".$diff_char_sample_string;
+
+        $text_type_number =rand(1,100);
+
+        if ($text_type_number <= 40) {
+            $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
+        } else if($text_type_number < 70)  {
+            $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
+        }
+    }
+
     $charList = implode(' ', $characters);
+
 
 
     //throttle request to max first 1,0000 characters
@@ -87,9 +123,9 @@ Route::get('/generate', function () {
         return response('Your character library is empty — add some first.');
     }
 
-    //throttle request to max first 1,000 characters
+    //throttle request to max first 1,200 characters
     // $characters = array_slice($characters, 1000);
-    $characters = array_slice($characters,0,1100);
+    $characters = array_slice($characters,0,1200);
 
     $char_diversity_note = "";
 
@@ -100,6 +136,39 @@ Route::get('/generate', function () {
     if (rand(1, 100) <= 50) {
         $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
     }
+
+    // Diversity for HSK4
+    if ((count($characters) > 1000)) {
+        $subvocab_ratio = 0.7;
+
+        $char_cutoff_index = round($subvocab_ratio * 1000);
+
+        $freq_chars = (config('vocab.characters'));
+
+        $simpler_chars = array_slice($freq_chars,0,$char_cutoff_index);
+
+        $difficult_chars = array_values(array_diff($characters, $simpler_chars));
+
+        $keys_diff_char_sample = array_rand($difficult_chars, 100);
+
+        $diff_char_sample = array_map(
+            fn($k) => $difficult_chars[$k],
+            $keys_diff_char_sample
+        );
+
+        $diff_char_sample_string = implode(' ', $diff_char_sample);
+
+        $char_diversity_note = $char_diversity_note . " Focus on using the more difficult characters I know, such as ".$diff_char_sample_string;
+
+        $text_type_number =rand(1,100);
+
+        if ($text_type_number <= 40) {
+            $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
+        } else if($text_type_number < 70)  {
+            $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
+        }
+    }
+    
 
     $charList = implode(' ', $characters);
 
