@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
+use App\Models\GeneratedText;
 
 /*
 |--------------------------------------------------------------------------
@@ -97,7 +98,16 @@ Route::post('/', function () {
         ],
     ]);
 
+
+    GeneratedText::create([
+        'user_id' => null,
+        'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
+        'generated_text' => $response->json('content.0.text'),
+    ]);
+
     return redirect('/')->with('story', $response->json('content.0.text'));
+
+
 })->middleware('throttle:50,1');
 
 Route::get('/dashboard', function () {
@@ -187,6 +197,12 @@ Route::get('/generate', function () {
         ],
     ]);
 
+    GeneratedText::create([
+        'user_id' => $user->id,
+        'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
+        'generated_text' => $response->json('content.0.text'),
+    ]);
+
     return view('story', ['story' => ($response->json('content.0.text')) ]);
 })->middleware('auth', 'throttle:50,1440');  // 50 generations per user per 24h;
 
@@ -216,5 +232,14 @@ Route::post('/characters', function () {
 
 // Privacy policy
 Route::view('/privacy', 'privacy')->name('privacy');
+
+Route::get('/generated-texts', function () {
+    abort_unless(auth()->id() === 1, 403);
+
+
+    $generatedTexts = GeneratedText::all();
+
+    dd($generatedTexts);
+})->middleware('auth')->name('generated_texts');
 
 require __DIR__.'/auth.php';

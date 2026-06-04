@@ -52,4 +52,14 @@ class User extends Authenticatable
     {
         return $this->hasOne(UserCharactersList::class);
     }
+
+    /**
+     * Get the generated texts associated with the user.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function generatedTexts()
+    {
+        return $this->hasMany(GeneratedText::class);
+    }
 }
