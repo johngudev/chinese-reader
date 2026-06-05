@@ -239,7 +239,7 @@ Route::get('/generated-texts', function () {
 
     $generatedTexts = GeneratedText::all();
 
-    dd($generatedTexts);
+    return ($generatedTexts);
 })->middleware('auth')->name('generated_texts');
 
 require __DIR__.'/auth.php';
