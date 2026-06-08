@@ -233,7 +233,7 @@ Route::post('/characters', function () {
 // Privacy policy
 Route::view('/privacy', 'privacy')->name('privacy');
 
-Route::get('/generated-texts', function () {
+Route::get('/retention', function () {
     abort_unless(auth()->id() === 1, 403);
 
     $rows = DB::select('
@@ -276,7 +276,7 @@ Route::get('/generated-texts', function () {
         'activationPct'    => $registered ? round($activated / $registered * 100, 1) : 0,
         'totalGenerations' => GeneratedText::count(),
     ]);
-})->middleware('auth')->name('generated_texts');
+})->middleware('auth')->name('retention');
 
 
 require __DIR__.'/auth.php';
