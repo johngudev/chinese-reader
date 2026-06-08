@@ -236,11 +236,47 @@ Route::view('/privacy', 'privacy')->name('privacy');
 Route::get('/generated-texts', function () {
     abort_unless(auth()->id() === 1, 403);
 
+    $rows = DB::select('
+        SELECT u.id,
+               DATEDIFF(NOW(), u.created_at)             AS account_age,
+               DATEDIFF(MAX(g.created_at), u.created_at) AS lifespan_days
+        FROM users u
+        INNER JOIN generated_texts g ON g.user_id = u.id
+        GROUP BY u.id, u.created_at
+    ');
 
-    $generatedTexts = GeneratedText::all()->count();
+    $users = collect($rows)->map(fn ($r) => (object) [
+        'age'      => (int) $r->account_age,
+        'lifespan' => (int) $r->lifespan_days,
+    ]);
 
+    $labels = [];
+    $percents = [];
+    $eligibleCounts = [];
 
-    return ($generatedTexts);
+    for ($n = 0; $n <= (int) $users->max('age'); $n++) {
+        $eligible = $users->filter(fn ($u) => $u->age >= $n);
+        if ($eligible->isEmpty()) break;
+
+        $retained = $eligible->filter(fn ($u) => $u->lifespan >= $n)->count();
+
+        $labels[]         = $n;
+        $percents[]       = round($retained / $eligible->count() * 100, 1);
+        $eligibleCounts[] = $eligible->count();
+    }
+
+    $registered = User::count();
+    $activated  = $users->count();
+
+    return view('retention-curve', [
+        'labels'           => $labels,
+        'percents'         => $percents,
+        'eligibleCounts'   => $eligibleCounts,
+        'totalUsers'       => $registered,
+        'activationPct'    => $registered ? round($activated / $registered * 100, 1) : 0,
+        'totalGenerations' => GeneratedText::count(),
+    ]);
 })->middleware('auth')->name('generated_texts');
+
 
 require __DIR__.'/auth.php';
