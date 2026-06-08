@@ -254,7 +254,7 @@ Route::get('/generated-texts', function () {
     $percents = [];
     $eligibleCounts = [];
 
-    for ($n = 0; $n <= (int) $users->max('age'); $n++) {
+    for ($n = 0; $n <= ((int) $users->max('age') - 11); $n++) {
         $eligible = $users->filter(fn ($u) => $u->age >= $n);
         if ($eligible->isEmpty()) break;
 
