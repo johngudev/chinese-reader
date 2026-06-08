@@ -237,7 +237,8 @@ Route::get('/generated-texts', function () {
     abort_unless(auth()->id() === 1, 403);
 
 
-    $generatedTexts = GeneratedText::all();
+    $generatedTexts = GeneratedText::all()->count();
+
 
     return ($generatedTexts);
 })->middleware('auth')->name('generated_texts');
