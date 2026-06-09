@@ -286,4 +286,90 @@ Route::get('/retention', function () {
 })->middleware('auth')->name('retention');
 
 
+Route::get('/parsed', function () {
+    $user       = auth()->user();
+    $characters = $user->charactersList?->characters_list ?? [];
+
+    if (empty($characters)) {
+        return response('Your character library is empty — add some first.');
+    }
+
+    //throttle request to max first 1,200 characters
+    // $characters = array_slice($characters, 1000);
+    $characters = array_slice($characters,0,1200);
+
+    $char_diversity_note = "";
+
+    if (count($characters) > 500) {
+        //Character diversity for over 500 characters
+        if (rand(1, 100) <= 40) {
+            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
+        }
+    }
+
+
+    if (rand(1, 100) <= 50) {
+        $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
+    }
+
+    // Diversity for HSK4
+    if ((count($characters) > 1000)) {
+        $subvocab_ratio = 0.7;
+
+        $char_cutoff_index = round($subvocab_ratio * 1000);
+
+        $freq_chars = (config('vocab.characters'));
+
+        $simpler_chars = array_slice($freq_chars,0,$char_cutoff_index);
+
+        $difficult_chars = array_values(array_diff($characters, $simpler_chars));
+
+        $keys_diff_char_sample = array_rand($difficult_chars, 100);
+
+        $diff_char_sample = array_map(
+            fn($k) => $difficult_chars[$k],
+            $keys_diff_char_sample
+        );
+
+        $diff_char_sample_string = implode(' ', $diff_char_sample);
+
+        $char_diversity_note = $char_diversity_note . " Focus on using the more difficult characters I know, such as ".$diff_char_sample_string;
+
+        $text_type_number =rand(1,100);
+
+        if ($text_type_number <= 40) {
+            $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
+        } else if($text_type_number < 70)  {
+            $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
+        }
+    }
+    
+
+    $charList = implode(' ', $characters);
+
+    
+
+    $response = Http::withHeaders([
+        'x-api-key'         => env('X_API_KEY'),
+        'anthropic-version' => '2023-06-01',
+        'content-type'      => 'application/json',
+    ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
+        'model'      => 'claude-haiku-4-5-20251001',
+        'max_tokens' => 2000,
+        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation.' . $char_diversity_note,
+        'messages'   => [
+            ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}"],
+        ],
+    ]);
+
+    GeneratedText::create([
+        'user_id' => $user->id,
+        'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
+        'generated_text' => $response->json('content.0.text'),
+    ]);
+
+    return view('story', ['story' => ($response->json('content.0.text')) ]);
+})->middleware('auth', 'throttle:50,1440');  // 50 generations per user per 24h;
+
+
 require __DIR__.'/auth.php';
