@@ -162,6 +162,7 @@ class ComposerStaticInitfe33f98a750b8c5a51b30c78bd3fab21
         'C' => 
         array (
             'Cron\\' => 5,
+            'CcCedict\\' => 9,
             'Carbon\\Doctrine\\' => 16,
             'Carbon\\' => 7,
         ),
@@ -506,6 +507,10 @@ class ComposerStaticInitfe33f98a750b8c5a51b30c78bd3fab21
         array (
             0 => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron',
         ),
+        'CcCedict\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mdsills/cccedict/src',
+        ),
         'Carbon\\Doctrine\\' => 
         array (
             0 => __DIR__ . '/..' . '/carbonphp/carbon-doctrine-types/src/Carbon/Doctrine',
@@ -660,6 +665,9 @@ class ComposerStaticInitfe33f98a750b8c5a51b30c78bd3fab21
         'Carbon\\Translator' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/Translator.php',
         'Carbon\\TranslatorImmutable' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/TranslatorImmutable.php',
         'Carbon\\TranslatorStrongTypeInterface' => __DIR__ . '/..' . '/nesbot/carbon/src/Carbon/TranslatorStrongTypeInterface.php',
+        'CcCedict\\Entry' => __DIR__ . '/..' . '/mdsills/cccedict/src/Entry.php',
+        'CcCedict\\Parser' => __DIR__ . '/..' . '/mdsills/cccedict/src/Parser.php',
+        'CcCedict\\Unpacker' => __DIR__ . '/..' . '/mdsills/cccedict/src/Unpacker.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Cron\\AbstractField' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/AbstractField.php',
         'Cron\\CronExpression' => __DIR__ . '/..' . '/dragonmantank/cron-expression/src/Cron/CronExpression.php',

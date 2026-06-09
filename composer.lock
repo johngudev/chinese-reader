@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "5e1cbca5ce204b3b5f902c942ccbb14b",
+    "content-hash": "e2fc8db699de4cc92b2effdcdbb33410",
     "packages": [
         {
             "name": "brick/math",
@@ -1816,6 +1816,46 @@
                 }
             ],
             "time": "2024-09-21T08:32:55+00:00"
+        },
+        {
+            "name": "mdsills/cccedict",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mdsills/cccedict.git",
+                "reference": "519b7ce00e8a7e547905b08aa1c7a4e884dae1e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mdsills/cccedict/zipball/519b7ce00e8a7e547905b08aa1c7a4e884dae1e9",
+                "reference": "519b7ce00e8a7e547905b08aa1c7a4e884dae1e9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "CcCedict\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Parser for CC-CEDICT Chinese-English dictionary",
+            "homepage": "https://github.com/mdsills/cccedict",
+            "keywords": [
+                "Chinese",
+                "cc-cedict",
+                "dictionary"
+            ],
+            "support": {
+                "issues": "https://github.com/mdsills/cccedict/issues",
+                "source": "https://github.com/mdsills/cccedict/tree/v1.0.0"
+            },
+            "time": "2023-11-04T11:20:08+00:00"
         },
         {
             "name": "monolog/monolog",

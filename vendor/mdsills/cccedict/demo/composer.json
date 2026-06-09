@@ -1,0 +1,5 @@
+{
+    "require": {
+        "mdsills/cccedict": "^1.0.0"
+    }
+}

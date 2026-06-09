@@ -2346,6 +2346,49 @@
             "install-path": "../league/mime-type-detection"
         },
         {
+            "name": "mdsills/cccedict",
+            "version": "v1.0.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mdsills/cccedict.git",
+                "reference": "519b7ce00e8a7e547905b08aa1c7a4e884dae1e9"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mdsills/cccedict/zipball/519b7ce00e8a7e547905b08aa1c7a4e884dae1e9",
+                "reference": "519b7ce00e8a7e547905b08aa1c7a4e884dae1e9",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0"
+            },
+            "time": "2023-11-04T11:20:08+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "CcCedict\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Parser for CC-CEDICT Chinese-English dictionary",
+            "homepage": "https://github.com/mdsills/cccedict",
+            "keywords": [
+                "Chinese",
+                "cc-cedict",
+                "dictionary"
+            ],
+            "support": {
+                "issues": "https://github.com/mdsills/cccedict/issues",
+                "source": "https://github.com/mdsills/cccedict/tree/v1.0.0"
+            },
+            "install-path": "../mdsills/cccedict"
+        },
+        {
             "name": "mockery/mockery",
             "version": "1.6.12",
             "version_normalized": "1.6.12.0",

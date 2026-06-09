@@ -1,0 +1,4 @@
+demo/*.gz
+demo/*.zip
+output.json
+.idea
