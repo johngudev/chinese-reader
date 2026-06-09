@@ -95,7 +95,7 @@ Route::post('/', function () {
     ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
         'model'      => 'claude-haiku-4-5-20251001',
         'max_tokens' => 2000,
-        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides.  The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
+        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
         'messages'   => [
             ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters." . $char_diversity_note],
         ],
@@ -415,7 +415,7 @@ Route::get('/generate', function () {
     ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
         'model'      => 'claude-haiku-4-5-20251001',
         'max_tokens' => 2000,
-        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides.  The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
+        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
         'messages'   => [
             ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}"],
         ],
