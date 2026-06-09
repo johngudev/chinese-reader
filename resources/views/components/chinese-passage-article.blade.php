@@ -1,4 +1,10 @@
-@props(['story'])
+@props(['story','definitions','chinese','english'])
+
+@if(!empty($definitions))
+<script>
+    const definitions = @json($definitions);
+</script>
+@endif
 
 {{-- Reading area --}}
 <article class="pinyin-off px-8 py-10 sm:px-12 sm:py-14 bg-white relative">
@@ -15,7 +21,12 @@
 
     <p id="generated-chinese-passage" class="whitespace-pre-line text-3xl leading-loose tracking-wide text-gray-900"
         style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
-        {{ $story }}
+        {{ $chinese }}</p>
+        <hr>
+        <p class="whitespace-pre-line text-2xl leading-loose tracking-wide text-gray-900"
+        style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
+        {{ $english }}
+        </p>
     </p>
 
     <script>
@@ -30,39 +41,137 @@
     </script>
 </article>
 
-<script>
-
-document.addEventListener('DOMContentLoaded', function () {
-    let wrapped = wrapTextInPinyin(document.getElementById("generated-chinese-passage").textContent);
-    console.log(wrapped);
-
-    document.getElementById("generated-chinese-passage").innerHTML = wrapped;
-            });
-
-</script>
-
 <style>
-.hanzi {
-    position: relative;
-}
+    /* whole-word hover highlight + pointer */
+    #generated-chinese-passage .word {
+        display: inline-block;              /* forces word to not do line break */
+        position: relative;                 /* ← anchors the pinyin above this word */
+        border-radius: 4px;
+        padding: 0 1px;
+        transition: background-color 0.12s ease;
+    }
+    #generated-chinese-passage .word:hover {
+        background-color: rgba(192, 57, 43, 0.12);
+        cursor: pointer;
+    }
 
-.pinyin-off .hanzi::before {
-    display: none;
-}
+    /* tooltip */
+    #word-tooltip {
+        position: absolute;
+        z-index: 60;
+        max-width: 280px;
+        display: none;
+        background: #1f2430;
+        color: #fff;
+        padding: 10px 13px;
+        border-radius: 12px;
+        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+        font-family: 'Inter', -apple-system, sans-serif;
+        font-size: 14px;
+        line-height: 1.45;
+    }
+    #word-tooltip .tip-word {
+        font-family: 'Noto Serif SC', serif;
+        font-size: 20px;
+        font-weight: 600;
+        margin-bottom: 2px;
+    }
+    #word-tooltip .tip-pinyin  { color: #f3a39b; }
+    #word-tooltip .tip-english { color: #e5e7eb; margin-bottom: 8px; }
+    #word-tooltip .tip-english:last-child { margin-bottom: 0; }
 
-.hanzi::before {
-    content: attr(data-pinyin);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 0.5em;
-    color: #6b6358;
-    font-family: 'Inter', -apple-system, sans-serif;
-    line-height: 1;
-    white-space: nowrap;
-    user-select: none;
-    -webkit-user-select: none;
-    pointer-events: none;
-}
+    /* word-level pinyin, shown/hidden by the .pinyin-off class on <article> */
+    #generated-chinese-passage .word::before {
+        content: attr(data-pinyin);
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translate(-50%, 0.75rem);
+        font-size: 0.4375em;
+        color: #6b6358;
+        font-family: 'Inter', -apple-system, sans-serif;
+        line-height: 1;
+        white-space: nowrap;
+        user-select: none;
+        -webkit-user-select: none;
+        pointer-events: none;
+    }
+    .pinyin-off #generated-chinese-passage .word::before {
+        display: none;
+    }
+
 </style>
+
+@if(!empty($definitions))
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const passage = document.getElementById('generated-chinese-passage');
+
+    // 1) Render the passage as word spans from `definitions`
+    passage.innerHTML = '';
+    let lastSpan = null;                                  // ← track the most recent word
+    definitions.forEach((token, i) => {
+        if (token.entries && token.entries.length) {
+            const span = document.createElement('span');
+            span.className = 'word';
+            span.dataset.i = i;
+            span.dataset.pinyin = token.entries[0].pinyin;
+            span.textContent = token.word;
+            passage.appendChild(span);
+            lastSpan = span;                             // ← remember it
+        } else if (lastSpan) {
+            // punctuation / unmatched — glue onto the previous word so it can't orphan
+            lastSpan.textContent += token.word;          // ← the one-liner
+        } else {
+            // no preceding word yet (e.g. text opens with punctuation)
+            passage.appendChild(document.createTextNode(token.word));
+        }
+    });
+
+
+    // 2) One shared tooltip element
+    const tip = document.createElement('div');
+    tip.id = 'word-tooltip';
+    document.body.appendChild(tip);
+
+    function showWord(span) {
+        const token = definitions[+span.dataset.i];
+        tip.innerHTML = '';
+
+        const head = document.createElement('div');
+        head.className = 'tip-word';
+        head.textContent = token.word;
+        tip.appendChild(head);
+
+        // a word can have several readings (homographs) — show them all
+        token.entries.forEach(entry => {
+            const py = document.createElement('div');
+            py.className = 'tip-pinyin';
+            py.textContent = entry.pinyin;
+            tip.appendChild(py);
+
+            const en = document.createElement('div');
+            en.className = 'tip-english';
+            en.textContent = entry.english.replace(/\//g, ' · '); // slash-separated → readable
+            tip.appendChild(en);
+        });
+
+        const r = span.getBoundingClientRect();
+        tip.style.display = 'block';
+        tip.style.top  = (window.scrollY + r.bottom + 8) + 'px';
+        tip.style.left = (window.scrollX + r.left) + 'px';
+    }
+
+    // 3) Click a word → show; click elsewhere → hide
+    passage.addEventListener('click', e => {
+        const span = e.target.closest('.word');
+        if (span) showWord(span);
+    });
+    document.addEventListener('click', e => {
+        if (!e.target.closest('.word') && !e.target.closest('#word-tooltip')) {
+            tip.style.display = 'none';
+        }
+    });
+});
+</script>
+@endif

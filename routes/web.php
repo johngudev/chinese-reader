@@ -27,7 +27,7 @@ Route::get('/', function () {
 
     
 
-    return view('welcome', ['story' => session('story')]);
+    return view('welcome', ['story' => session('story'), 'chinese' => session('chinese'), 'english' => session('english'), 'definitions' => session('definitions')]);
 });
 
 Route::post('/', function () {
@@ -95,12 +95,67 @@ Route::post('/', function () {
     ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
         'model'      => 'claude-haiku-4-5-20251001',
         'max_tokens' => 2000,
-        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation.' . $char_diversity_note,
+        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
         'messages'   => [
             ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters." . $char_diversity_note],
         ],
     ]);
 
+    $story = $response->json('content.0.text');
+
+    //split story into english and chinese by <hr>
+    [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
+
+        // ---- Build $definitions: segment the Chinese and look up each word ----
+        $chineseText = $chinese;                  // Chinese only — drop the English translation
+        preg_match_all('/\p{Han}/u', $chineseText, $matches);             // keep only Han characters
+        $chars  = $matches[0];
+        $n      = count($chars);
+        $maxLen = 8;
+    
+        // 1) every contiguous substring (length 1..maxLen) that appears in the text
+        $candidates = [];
+        for ($i = 0; $i < $n; $i++) {
+            for ($len = 1; $len <= min($maxLen, $n - $i); $len++) {
+                $candidates[implode('', array_slice($chars, $i, $len))] = true;
+            }
+        }
+    
+        // 2) one query; group by simplified because a word can have several entries (homographs, e.g. 行)
+        $dict = DB::table('cedict')
+            ->whereIn('simplified', array_keys($candidates))
+            ->get(['simplified', 'pinyin', 'pinyin_numeric', 'english'])
+            ->groupBy('simplified');
+    
+        // 3) greedy longest-match — no further queries
+        $definitions = [];
+        $i = 0;
+        while ($i < $n) {
+            $matched = null;
+            for ($len = min($maxLen, $n - $i); $len >= 1; $len--) {
+                $word = implode('', array_slice($chars, $i, $len));
+                if (isset($dict[$word])) { $matched = [$word, $len]; break; }
+            }
+    
+            if ($matched) {
+                [$word, $len] = $matched;
+                $definitions[] = [
+                    'word'    => $word,
+                    'entries' => $dict[$word]->map(fn ($e) => [
+                        'pinyin'         => $e->pinyin,
+                        'pinyin_numeric' => $e->pinyin_numeric,
+                        'english'        => $e->english,
+                    ])->all(),
+                ];
+                $i += $len;
+            } else {
+                // a Han character not in the dictionary (rare)
+                $definitions[] = ['word' => $chars[$i], 'entries' => []];
+                $i++;
+            }
+        }
+        // ------------------------------------------------------------------------
+    
 
     GeneratedText::create([
         'user_id' => null,
@@ -108,10 +163,12 @@ Route::post('/', function () {
         'generated_text' => $response->json('content.0.text'),
     ]);
 
-    return redirect('/')->with('story', $response->json('content.0.text'));
-
-
-})->middleware('throttle:50,1');
+    return redirect('/')
+        ->with('story',       $story)
+        ->with('chinese',     trim($chinese))
+        ->with('english',     trim($english))
+        ->with('definitions', $definitions);
+})->middleware('throttle:100,1');
 
 Route::get('/dashboard', function () {
     return redirect('/characters');
@@ -128,6 +185,7 @@ Route::get('/story', function () {
     return view('story');
 })->middleware('auth')->name('generate');
 
+/* Remove old generate code
 Route::get('/generate', function () {
     $user       = auth()->user();
     $characters = $user->charactersList?->characters_list ?? [];
@@ -212,6 +270,7 @@ Route::get('/generate', function () {
 
     return view('story', ['story' => ($response->json('content.0.text')) ]);
 })->middleware('auth', 'throttle:50,1440');  // 50 generations per user per 24h;
+*/
 
 // Show the form (pre-filled with their current list)
 Route::get('/characters', function () {
@@ -286,7 +345,7 @@ Route::get('/retention', function () {
 })->middleware('auth')->name('retention');
 
 
-Route::get('/parsed', function () {
+Route::get('/generate', function () {
     $user       = auth()->user();
     $characters = $user->charactersList?->characters_list ?? [];
 
@@ -356,11 +415,68 @@ Route::get('/parsed', function () {
     ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
         'model'      => 'claude-haiku-4-5-20251001',
         'max_tokens' => 2000,
-        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation.' . $char_diversity_note,
+        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
         'messages'   => [
             ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}"],
         ],
     ]);
+
+    $story = $response->json('content.0.text');
+
+    //split story into english and chinese by <hr>
+    [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
+
+
+    // ---- Build $definitions: segment the Chinese and look up each word ----
+    $chineseText = $chinese;                  // Chinese only — drop the English translation
+    preg_match_all('/\p{Han}/u', $chineseText, $matches);             // keep only Han characters
+    $chars  = $matches[0];
+    $n      = count($chars);
+    $maxLen = 8;
+
+    // 1) every contiguous substring (length 1..maxLen) that appears in the text
+    $candidates = [];
+    for ($i = 0; $i < $n; $i++) {
+        for ($len = 1; $len <= min($maxLen, $n - $i); $len++) {
+            $candidates[implode('', array_slice($chars, $i, $len))] = true;
+        }
+    }
+
+    // 2) one query; group by simplified because a word can have several entries (homographs, e.g. 行)
+    $dict = DB::table('cedict')
+        ->whereIn('simplified', array_keys($candidates))
+        ->get(['simplified', 'pinyin', 'pinyin_numeric', 'english'])
+        ->groupBy('simplified');
+
+    // 3) greedy longest-match — no further queries
+    $definitions = [];
+    $i = 0;
+    while ($i < $n) {
+        $matched = null;
+        for ($len = min($maxLen, $n - $i); $len >= 1; $len--) {
+            $word = implode('', array_slice($chars, $i, $len));
+            if (isset($dict[$word])) { $matched = [$word, $len]; break; }
+        }
+
+        if ($matched) {
+            [$word, $len] = $matched;
+            $definitions[] = [
+                'word'    => $word,
+                'entries' => $dict[$word]->map(fn ($e) => [
+                    'pinyin'         => $e->pinyin,
+                    'pinyin_numeric' => $e->pinyin_numeric,
+                    'english'        => $e->english,
+                ])->all(),
+            ];
+            $i += $len;
+        } else {
+            // a Han character not in the dictionary (rare)
+            $definitions[] = ['word' => $chars[$i], 'entries' => []];
+            $i++;
+        }
+    }
+    // ------------------------------------------------------------------------
+    
 
     GeneratedText::create([
         'user_id' => $user->id,
@@ -368,8 +484,13 @@ Route::get('/parsed', function () {
         'generated_text' => $response->json('content.0.text'),
     ]);
 
-    return view('story', ['story' => ($response->json('content.0.text')) ]);
-})->middleware('auth', 'throttle:50,1440');  // 50 generations per user per 24h;
+
+    return view('story', [
+        'story' => ($response->json('content.0.text')),
+        'chinese' => trim($chinese),
+        'english' => trim($english),
+        'definitions' => $definitions,]);
+})->middleware('auth', 'throttle:100,1440');  // 50 generations per user per 24h;
 
 
 require __DIR__.'/auth.php';

@@ -13,10 +13,13 @@
 
                     {{-- Reading area --}}
 
-
+                    @if(empty($definitions))
+                        @php
+                            $definitions = [];
+                        @endphp
+                    @endif
                     
-                    <x-chinese-passage-article :story="$story" />
-
+                    <x-chinese-passage-article :story="$story" :definitions="$definitions" :chinese="$chinese" :english="$english"/>
 
                     {{-- Footer / actions --}}
                     <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-8 py-4 sm:px-12">

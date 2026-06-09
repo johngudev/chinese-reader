@@ -301,7 +301,7 @@
 
                 </div>
                 @else
-                <x-chinese-passage-article :story="$story" />
+                <x-chinese-passage-article :story="$story" :chinese="$chinese" :english="$english" :definitions="$definitions"/>
                 @endif
             </div>
         </div>
