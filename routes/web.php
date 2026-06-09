@@ -40,7 +40,10 @@ Route::post('/', function () {
     $char_diversity_note = "";
 
     if (count($characters) > 500) {
-        $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
+        //Character diversity for over 500 characters
+        if (rand(1, 100) <= 40) {
+            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
+        }
     }
 
     if (rand(1, 100) <= 50) {
@@ -140,8 +143,12 @@ Route::get('/generate', function () {
     $char_diversity_note = "";
 
     if (count($characters) > 500) {
-        $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more.";
+        //Character diversity for over 500 characters
+        if (rand(1, 100) <= 40) {
+            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
+        }
     }
+
 
     if (rand(1, 100) <= 50) {
         $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
