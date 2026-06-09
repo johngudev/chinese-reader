@@ -19,7 +19,7 @@
         </span>
     </label>
 
-    <p id="generated-chinese-passage" class="whitespace-pre-line text-3xl leading-loose tracking-wide text-gray-900"
+    <p id="generated-chinese-passage" class="whitespace-pre-line text-3xl leading-loose tracking-wide text-gray-900 mt-4"
         style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
         {{ $chinese }}</p>
         <hr>
