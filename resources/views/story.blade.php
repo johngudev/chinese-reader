@@ -55,6 +55,63 @@
                     </div>
                 </div>
             @endif
+
+
+            @auth
+            <script>
+            document.addEventListener('alpine:init', () => {
+                Alpine.data('savedWords', ({ initial }) => ({
+                    words: initial ?? [],
+                    add(word) {
+                        if (this.words.some(w => w.id === word.id)) return;
+                        this.words.push(word);
+                    },
+                    async remove(word) {
+                        this.words = this.words.filter(w => w.id !== word.id);
+                        try {
+                            await fetch('/saved-words/' + word.id, {
+                                method: 'DELETE',
+                                headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
+                            });
+                        } catch { this.words.push(word); }
+                    },
+                }));
+            });
+            </script>
+
+        <div
+            x-data="savedWords({ initial: @js($savedWords) })"
+            @word-saved.window="add($event.detail)"
+            class="mx-auto max-w-3xl bg-gray-50 px-8 py-6 sm:px-12"
+        >
+            <h3 class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">生词 · Words you looked up</h3>
+            <p x-show="words.length === 0" class="mt-2 text-sm text-gray-400">Tap a word above to add it here.</p>
+
+            <ul class="mt-3 flex flex-col gap-2">
+                <template x-for="w in words" :key="w.id">
+                    <li class="relative flex items-start gap-3 rounded-xl bg-white px-4 py-3 pr-9 shadow-sm ring-1 ring-gray-200">
+
+                        {{-- big character --}}
+                        <span class="font-serifsc text-3xl leading-none text-gray-900 shrink-0" x-text="w.word"></span>
+
+                        {{-- pinyin + definition stacked beside it --}}
+                        <div class="min-w-0 flex-1">
+                            <span class="block text-xs text-seal" x-text="w.pinyin"></span>
+                            <span class="mt-0.5 block text-xs leading-snug text-gray-500 line-clamp-2" x-text="w.english"></span>
+                        </div>
+
+                        {{-- × pinned top-right --}}
+                        <button @click="remove(w)"
+                            class="absolute right-2 top-2 text-gray-300 transition hover:text-seal"
+                            aria-label="Remove">&times;</button>
+                    </li>
+                </template>
+            </ul>
         </div>
+            @endauth
+
+        </div>
+        
+
     </div>
 </x-app-layout>
