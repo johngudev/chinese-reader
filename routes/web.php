@@ -510,6 +510,8 @@ Route::get('/texts/{text}', function (GeneratedText $text) {
     abort_unless($text->user_id === auth()->id(), 403);
     [$chinese, $english] = array_pad(explode('<hr>', $text->generated_text ?? ''), 2, '');
 
+    $chinese = trim($chinese);
+
     return view('story', [
         'story' => $text->generated_text,
         'chinese' => trim(strip_tags($chinese)),
