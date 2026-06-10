@@ -56,7 +56,7 @@
                 </div>
             @endif
 
-
+            @if(!empty($story))
             @auth
             <script>
             document.addEventListener('alpine:init', () => {
@@ -108,7 +108,8 @@
                 </template>
             </ul>
         </div>
-            @endauth
+        @endauth
+        @endif
 
         </div>
         
