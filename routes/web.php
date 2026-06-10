@@ -432,7 +432,7 @@ Route::get('/generate', function () {
 
     // ---- Build $definitions: segment the Chinese and look up each word ----
     $chineseText = $chinese;                  // Chinese only — drop the English translation
-    $chars = preg_split('//u', $chinese, -1, PREG_SPLIT_NO_EMPTY);            // keep only Han characters
+    preg_match_all('/\p{Han}/u', $chineseText, $matches);             // keep only Han characters
     $chars  = $matches[0];
     $n      = count($chars);
     $maxLen = 8;
