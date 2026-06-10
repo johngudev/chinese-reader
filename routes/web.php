@@ -493,4 +493,9 @@ Route::get('/generate', function () {
 })->middleware('auth', 'throttle:100,1440');  // 50 generations per user per 24h;
 
 
+Route::get('/my-texts', function () {
+    $texts = auth()->user()->generatedTexts()->latest()->take(20)->get();
+    return view('my-texts', ['texts' => $texts]);
+})->middleware('auth')->name('my-texts');
+
 require __DIR__.'/auth.php';
