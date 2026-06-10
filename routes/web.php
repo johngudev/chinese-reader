@@ -498,15 +498,69 @@ Route::get('/history', function () {
     return view('my-texts', ['texts' => $texts]);
 })->middleware('auth')->name('history');
 
+
 Route::get('/texts/{text}', function (GeneratedText $text) {
     abort_unless($text->user_id === auth()->id(), 403);
     [$chinese, $english] = array_pad(explode('<hr>', $text->generated_text ?? ''), 2, '');
+
     return view('story', [
         'story' => $text->generated_text,
         'chinese' => trim(strip_tags($chinese)),
         'english' => trim($english),
-        'definitions' => $text->annotation ?? /* re-annotate fallback */ [],
+        'definitions' => getDefinitions($chinese) ?? /* re-annotate fallback */ [],
     ]);
 })->middleware('auth');
 
 require __DIR__.'/auth.php';
+
+function getDefinitions(string $chinese, int $maxLen = 8): array
+{
+    preg_match_all('/\p{Han}/u', $chinese, $matches);
+    $chars = $matches[0];
+    $n     = count($chars);
+
+    if ($n === 0) return [];
+
+    // 1) every contiguous substring (length 1..maxLen)
+    $candidates = [];
+    for ($i = 0; $i < $n; $i++) {
+        for ($len = 1; $len <= min($maxLen, $n - $i); $len++) {
+            $candidates[implode('', array_slice($chars, $i, $len))] = true;
+        }
+    }
+
+    // 2) one batched query; group by simplified (homographs → several entries)
+    $dict = DB::table('cedict')
+        ->whereIn('simplified', array_keys($candidates))
+        ->get(['simplified', 'pinyin', 'pinyin_numeric', 'english'])
+        ->groupBy('simplified');
+
+    // 3) greedy longest-match — no further queries
+    $definitions = [];
+    $i = 0;
+    while ($i < $n) {
+        $matched = null;
+        for ($len = min($maxLen, $n - $i); $len >= 1; $len--) {
+            $word = implode('', array_slice($chars, $i, $len));
+            if (isset($dict[$word])) { $matched = [$word, $len]; break; }
+        }
+
+        if ($matched) {
+            [$word, $len] = $matched;
+            $definitions[] = [
+                'word'    => $word,
+                'entries' => $dict[$word]->map(fn ($e) => [
+                    'pinyin'         => $e->pinyin,
+                    'pinyin_numeric' => $e->pinyin_numeric,
+                    'english'        => $e->english,
+                ])->all(),
+            ];
+            $i += $len;
+        } else {
+            $definitions[] = ['word' => $chars[$i], 'entries' => []];  // Han char not in dict (rare)
+            $i++;
+        }
+    }
+
+    return $definitions;
+}
