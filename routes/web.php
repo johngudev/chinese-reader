@@ -498,4 +498,15 @@ Route::get('/history', function () {
     return view('my-texts', ['texts' => $texts]);
 })->middleware('auth')->name('history');
 
+Route::get('/texts/{text}', function (GeneratedText $text) {
+    abort_unless($text->user_id === auth()->id(), 403);
+    [$chinese, $english] = array_pad(explode('<hr>', $text->generated_text ?? ''), 2, '');
+    return view('story', [
+        'story' => $text->generated_text,
+        'chinese' => trim(strip_tags($chinese)),
+        'english' => trim($english),
+        'definitions' => $text->annotation ?? /* re-annotate fallback */ [],
+    ]);
+})->middleware('auth');
+
 require __DIR__.'/auth.php';
