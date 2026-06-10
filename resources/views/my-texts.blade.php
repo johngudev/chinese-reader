@@ -28,7 +28,7 @@
                             $chinese = trim(strip_tags($chinese));
 
                             // Chinese: cut by characters (every char is a "word")
-                            $chineseSnippet = mb_substr($chinese, 0, 24) . (mb_strlen($chinese) > 24 ? '……' : '');
+                            $chineseSnippet = mb_substr($chinese, 0, 24) . (mb_strlen($chinese) > 24 ? '…' : '');
 
                             // English: cut by words, never mid-word
                             $englishSnippet = \Illuminate\Support\Str::words($english, 10, '…');
