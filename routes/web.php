@@ -5,6 +5,9 @@ use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\GeneratedText;
+use App\Models\SavedWord;
+use Illuminate\Http\Request;
+
 
 /*
 |--------------------------------------------------------------------------
