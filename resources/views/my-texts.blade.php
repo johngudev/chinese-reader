@@ -27,8 +27,11 @@
                             [$chinese, $english] = array_pad(explode('<hr>', $text->generated_text ?? ''), 2, '');
                             $chinese = trim(strip_tags($chinese));
 
-                            // Snippet + Han character count (multibyte-safe)
-                            $snippet   = mb_substr($chinese, 0, 48) . (mb_strlen($chinese) > 48 ? '……' : '');
+                            // Chinese: cut by characters (every char is a "word")
+                            $chineseSnippet = mb_substr($chinese, 0, 24) . (mb_strlen($chinese) > 24 ? '……' : '');
+
+                            // English: cut by words, never mid-word
+                            $englishSnippet = \Illuminate\Support\Str::words($english, 10, '…');
                             $charCount = preg_match_all('/\p{Han}/u', $chinese);
                         @endphp
 
@@ -37,7 +40,10 @@
                                 class="block overflow-hidden rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100 transition hover:ring-indigo-300 hover:shadow sm:p-7">
 
                                 <p class="font-serifsc text-xl leading-relaxed text-gray-900">
-                                    {{ $snippet }}
+                                    {{ $chineseSnippet }}
+                                </p>
+                                <p class="mt-1 text-sm leading-relaxed text-gray-500">
+                                    {{ $englishSnippet }}
                                 </p>
 
                                 <div class="mt-3 flex items-center justify-between">
