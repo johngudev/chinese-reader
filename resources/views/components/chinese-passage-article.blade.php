@@ -1,4 +1,4 @@
-@props(['story','definitions','chinese','english','savedWords','textId'])
+@props(['story','definitions','chinese','english','savedWords' => [], 'textId' => null])
 
 @if(!empty($definitions))
 <script>
@@ -21,13 +21,14 @@
 
     <p id="generated-chinese-passage" class="whitespace-pre-line text-3xl leading-loose tracking-wide text-gray-900 mt-4"
         style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
-        {{ $chinese }}</p>
-        <hr>
-        <p class="whitespace-pre-line text-2xl leading-loose tracking-wide text-gray-900"
-        style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
-        {{ $english }}
-        </p>
+        {{ $chinese }}
     </p>
+        <hr>
+    <p class="whitespace-pre-line text-2xl leading-loose tracking-wide text-gray-900"
+    style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
+    {{ $english }}
+    </p>
+    
 
     <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -205,8 +206,29 @@ document.addEventListener('DOMContentLoaded', () => {
 @endif
 
 @auth
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('savedWords', ({ initial }) => ({
+        words: initial ?? [],
+        add(word) {
+            if (this.words.some(w => w.id === word.id)) return;
+            this.words.push(word);
+        },
+        async remove(word) {
+            this.words = this.words.filter(w => w.id !== word.id);
+            try {
+                await fetch('/saved-words/' + word.id, {
+                    method: 'DELETE',
+                    headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
+                });
+            } catch { this.words.push(word); }
+        },
+    }));
+});
+</script>
+
 <div
-    x-data="savedWords({ textId: {{ $textId ?? 'null' }}, initial: @js($savedWords) })"
+    x-data="savedWords({ initial: @js($savedWords) })"
     @word-saved.window="add($event.detail)"
     class="border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12"
 >
