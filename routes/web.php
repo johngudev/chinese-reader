@@ -494,7 +494,7 @@ Route::get('/generate', function () {
 
 
 Route::get('/history', function () {
-    $texts = auth()->user()->generatedTexts()->latest()->take(20)->get();
+    $texts = auth()->user()->generatedTexts()->latest()->take(10)->get();
     return view('my-texts', ['texts' => $texts]);
 })->middleware('auth')->name('history');
 
