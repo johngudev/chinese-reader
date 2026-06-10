@@ -1,4 +1,4 @@
-@props(['story','definitions','chinese','english'])
+@props(['story','definitions','chinese','english','savedWords','textId'])
 
 @if(!empty($definitions))
 <script>
@@ -162,10 +162,38 @@ document.addEventListener('DOMContentLoaded', () => {
         tip.style.left = (window.scrollX + r.left) + 'px';
     }
 
+    async function saveWord(i) {
+        const token = definitions[i];
+        if (!token.entries?.length) return;   // skip punctuation / unknown chars
+        const entry = token.entries[0];
+        try {
+            const res = await fetch('/saved-words', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content,
+                },
+                body: JSON.stringify({
+                    generated_text_id: SAVE_TEXT_ID,
+                    word: token.word, pinyin: entry.pinyin, english: entry.english,
+                }),
+            });
+            if (res.ok) window.dispatchEvent(new CustomEvent('word-saved', { detail: await res.json() }));
+        } catch {}
+    }
+
+
+    const SAVE_TEXT_ID = {{ $textId ?? 'null' }};
+    const CAN_SAVE     = {{ (auth()->check() && $textId) ? 'true' : 'false' }};
+
+
     // 3) Click a word → show; click elsewhere → hide
     passage.addEventListener('click', e => {
         const span = e.target.closest('.word');
-        if (span) showWord(span);
+        if (span) {
+            showWord(span);
+            if (CAN_SAVE) saveWord(+span.dataset.i);
+        }
     });
     document.addEventListener('click', e => {
         if (!e.target.closest('.word') && !e.target.closest('#word-tooltip')) {
@@ -175,3 +203,24 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 @endif
+
+@auth
+<div
+    x-data="savedWords({ textId: {{ $textId ?? 'null' }}, initial: @js($savedWords) })"
+    @word-saved.window="add($event.detail)"
+    class="border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12"
+>
+    <h3 class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">生词 · Words you looked up</h3>
+    <p x-show="words.length === 0" class="mt-2 text-sm text-gray-400">Tap a word above to add it here.</p>
+
+    <ul class="mt-3 flex flex-wrap gap-2">
+        <template x-for="w in words" :key="w.id">
+            <li class="inline-flex items-center gap-2 rounded-full bg-white px-3 py-1.5 shadow-sm ring-1 ring-gray-200">
+                <span class="font-serifsc text-base text-gray-900" x-text="w.word"></span>
+                <span class="text-xs text-seal" x-text="w.pinyin"></span>
+                <button @click="remove(w)" class="ml-1 text-gray-300 transition hover:text-seal" aria-label="Remove">&times;</button>
+            </li>
+        </template>
+    </ul>
+</div>
+@endauth

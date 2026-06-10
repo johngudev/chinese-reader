@@ -531,6 +531,7 @@ class ComposerStaticInitfe33f98a750b8c5a51b30c78bd3fab21
     );
 
     public static $classMap = array (
+        'App\\Console\\Commands\\LoadCedict' => __DIR__ . '/../..' . '/app/Console/Commands/LoadCedict.php',
         'App\\Console\\Kernel' => __DIR__ . '/../..' . '/app/Console/Kernel.php',
         'App\\Exceptions\\Handler' => __DIR__ . '/../..' . '/app/Exceptions/Handler.php',
         'App\\Http\\Controllers\\Auth\\AuthenticatedSessionController' => __DIR__ . '/../..' . '/app/Http/Controllers/Auth/AuthenticatedSessionController.php',
@@ -557,6 +558,7 @@ class ComposerStaticInitfe33f98a750b8c5a51b30c78bd3fab21
         'App\\Http\\Requests\\Auth\\LoginRequest' => __DIR__ . '/../..' . '/app/Http/Requests/Auth/LoginRequest.php',
         'App\\Http\\Requests\\ProfileUpdateRequest' => __DIR__ . '/../..' . '/app/Http/Requests/ProfileUpdateRequest.php',
         'App\\Models\\GeneratedText' => __DIR__ . '/../..' . '/app/Models/GeneratedText.php',
+        'App\\Models\\SavedWord' => __DIR__ . '/../..' . '/app/Models/SavedWord.php',
         'App\\Models\\User' => __DIR__ . '/../..' . '/app/Models/User.php',
         'App\\Models\\UserCharactersList' => __DIR__ . '/../..' . '/app/Models/UserCharactersList.php',
         'App\\Providers\\AppServiceProvider' => __DIR__ . '/../..' . '/app/Providers/AppServiceProvider.php',

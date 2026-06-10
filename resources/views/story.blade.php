@@ -19,7 +19,7 @@
                         @endphp
                     @endif
                     
-                    <x-chinese-passage-article :story="$story" :definitions="$definitions" :chinese="$chinese" :english="$english"/>
+                    <x-chinese-passage-article :story="$story" :definitions="$definitions" :chinese="$chinese" :english="$english" :textId="$textId" :savedWords="$savedWords"/>
 
                     {{-- Footer / actions --}}
                     <div class="flex items-center justify-between border-t border-gray-100 bg-gray-50 px-8 py-4 sm:px-12">

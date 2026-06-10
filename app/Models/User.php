@@ -62,4 +62,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(GeneratedText::class);
     }
+
+    /**
+     * Get the saved words associated with the user.
+     * 
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function savedWords() { return $this->hasMany(SavedWord::class); }
+
 }

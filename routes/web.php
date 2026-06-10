@@ -478,7 +478,7 @@ Route::get('/generate', function () {
     // ------------------------------------------------------------------------
     
 
-    GeneratedText::create([
+    $generated = GeneratedText::create([
         'user_id' => $user->id,
         'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
         'generated_text' => $response->json('content.0.text'),
@@ -489,7 +489,9 @@ Route::get('/generate', function () {
         'story' => ($response->json('content.0.text')),
         'chinese' => trim($chinese),
         'english' => trim($english),
-        'definitions' => $definitions,]);
+        'definitions' => $definitions,
+        'textId' => $generated->id,
+        'savedWords' => []]);
 })->middleware('auth', 'throttle:100,1440');  // 50 generations per user per 24h;
 
 
@@ -508,7 +510,30 @@ Route::get('/texts/{text}', function (GeneratedText $text) {
         'chinese' => trim(strip_tags($chinese)),
         'english' => trim($english),
         'definitions' => getDefinitions($chinese) ?? /* re-annotate fallback */ [],
+        'textId' => $text->id,
+        'savedWords' => auth()->user()->savedWords()->where('generated_text_id', $text->id)->get(['id', 'word', 'pinyin', 'english']), 
     ]);
+})->middleware('auth');
+
+Route::post('/saved-words', function (Request $r) {
+    $data = $r->validate([
+        'generated_text_id' => 'nullable|integer|exists:generated_texts,id',
+        'word'              => 'required|string|max:32',
+        'pinyin'            => 'nullable|string|max:255',
+        'english'           => 'nullable|string',
+    ]);
+    // updateOrCreate = idempotent; double-clicks return the same row
+    $word = auth()->user()->savedWords()->updateOrCreate(
+        ['generated_text_id' => $data['generated_text_id'] ?? null, 'word' => $data['word']],
+        ['pinyin' => $data['pinyin'] ?? null, 'english' => $data['english'] ?? null],
+    );
+    return response()->json($word);   // includes id, needed for delete
+})->middleware('auth');
+
+Route::delete('/saved-words/{savedWord}', function (SavedWord $savedWord) {
+    abort_unless($savedWord->user_id === auth()->id(), 403);   // ownership check
+    $savedWord->delete();
+    return response()->noContent();
 })->middleware('auth');
 
 require __DIR__.'/auth.php';
