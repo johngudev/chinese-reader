@@ -429,11 +429,13 @@ Route::get('/generate', function () {
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
 
+    $chinese = trim($chinese);
 
     // ---- Build $definitions: segment the Chinese and look up each word ----
     $chineseText = $chinese;                  // Chinese only — drop the English translation
-    preg_match_all('/\p{Han}/u', $chineseText, $matches);             // keep only Han characters
-    $chars  = $matches[0];
+    $chars = preg_split('//u', $chinese, -1, PREG_SPLIT_NO_EMPTY);   // ← every char, punctuation included
+    $n     = count($chars);
+
     $n      = count($chars);
     $maxLen = 8;
 
@@ -543,8 +545,7 @@ require __DIR__.'/auth.php';
 
 function getDefinitions(string $chinese, int $maxLen = 8): array
 {
-    preg_match_all('/\p{Han}/u', $chinese, $matches);
-    $chars = $matches[0];
+    $chars = preg_split('//u', $chinese, -1, PREG_SPLIT_NO_EMPTY);   // ← every char, punctuation included
     $n     = count($chars);
 
     if ($n === 0) return [];
