@@ -64,7 +64,7 @@
                         placeholder="你好我是中国人…">{{ implode(' ', $characters) }}</textarea>
 
                     <div class="my-4 flex items-center justify-between">
-                        <span class="text-sm text-gray-500">
+                        <span class="text-sm text-gray-500" id="characters-textbox-count">
                             Currently saved: {{ count($characters) }} characters
                         </span>
 
@@ -90,8 +90,12 @@
                     <p class="max-w-sm text-sm text-white/80">
                         We'll write you a text using only the characters you know.
                     </p>
-                    <form method="POST" action="{{ url('/generate') }}">
+                    <form method="POST" action="{{ url('/generate') }}" onsubmit="document.getElementById('characters_hidden').value = document.getElementById('characters').value">
                         @csrf
+                        <textarea name="characters" id="characters_hidden" rows="10"
+                        class="hidden"
+                        placeholder="">{{ implode(' ', $characters) }}</textarea>
+
                         <button type="submit"
                             onclick="document.getElementById('loading-modal').classList.remove('hidden')"
                             class="mt-2 inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
