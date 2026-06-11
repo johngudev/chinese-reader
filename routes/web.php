@@ -822,7 +822,7 @@ Route::get('/outreach', function () {
     $users = collect($rows);
 
     // Interview targets: came back on 3+ separate days — the sticky tail
-    $power = $users->filter(fn ($u) => $u->active_days >= 3)
+    $power = $users->filter(fn ($u) => $u->gens >= 10)
         ->sortByDesc(fn ($u) => [$u->active_days, $u->gens])
         ->values();
 
