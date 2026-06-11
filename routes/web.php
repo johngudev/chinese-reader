@@ -807,6 +807,13 @@ Route::get('/characters', function () {
     return view('characters', ['characters' => $characters, 'vocabLists' => $vocabLists]);
 })->middleware('auth')->name('characters');;
 
+Route::get('/analzye', function() {
+    abort_unless(auth()->id() === 1, 403);
+
+    $charactersList = User::find(426)->charactersList;
+
+    return $charactersList;
+})->middleware('auth')->name('analyze');
 
 Route::get('/outreach', function () {
     abort_unless(auth()->id() === 1, 403);
