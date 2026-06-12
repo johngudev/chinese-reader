@@ -894,6 +894,8 @@ Route::get('/dash', function () {
         'maxed'     => $next === null,
     ];
 
+    $myCharacters = implode(' ', $user->charactersList?->characters_list ?? []);
+
     // ── library: recent texts ───────────────────────────────
     $recentTexts = $user->generatedTexts()->latest()->limit(6)
     ->get(['id', 'generated_text', 'created_at'])
@@ -913,6 +915,6 @@ Route::get('/dash', function () {
     return view('dashboard', compact(
         'streakCurrent', 'streakLongest', 'charsSeen',
         'wordsTotal', 'wordsRecent', 'textsTotal',
-        'activityLabels', 'activityCounts', 'progress', 'deck', 'recentTexts'
+        'activityLabels', 'activityCounts', 'progress', 'deck', 'recentTexts', 'myCharacters'
     ) + ['memberSince' => $user->created_at->format('M Y')]);
 })->middleware('auth')->name('dash');

@@ -141,6 +141,41 @@
                 </section>
             </div>
 
+            {{-- ── My characters (read-only) ────────────── --}}
+            <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+                <div class="mb-3 flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <span class="grid h-6 w-6 place-items-center rounded-md bg-seal font-serifsc text-sm text-white">字</span>
+                        <h2 class="font-serifsc text-lg font-bold text-gray-900">我的字 · My characters</h2>
+                    </div>
+                    <span class="text-xs text-gray-500">{{ number_format($progress['current']) }} 字</span>
+                </div>
+
+                @if ($myCharacters === '')
+                    <p class="text-sm leading-relaxed text-gray-500">
+                        No characters saved yet — add the characters you know to get personalized texts.
+                    </p>
+                @else
+                    <div id="my-characters"
+                        class="max-h-44 overflow-y-auto rounded-xl bg-gray-50 p-3.5 font-serifsc text-lg leading-loose text-gray-800 ring-1 ring-gray-100">{{ $myCharacters }}</div>
+                @endif
+
+                <div class="mt-3 flex items-center justify-between">
+                    <button type="button" id="copy-characters"
+                        onclick="copyCharacters()"
+                        class="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm font-medium text-gray-600 ring-1 ring-gray-200 transition hover:text-seal hover:ring-seal/40 {{ $myCharacters === '' ? 'hidden' : '' }}">
+                        复制 · Copy
+                    </button>
+                    <a href="{{ url('/characters') }}"
+                        class="text-sm text-gray-500 underline decoration-gray-300 underline-offset-4 transition hover:text-seal">
+                        修改 · Edit my characters →
+                    </a>
+                </div>
+            </section>
+ 
+ 
+
+
             {{-- ── History: recent texts ────────────────────── --}}
             <section class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <div class="mb-4 flex items-center justify-between">
