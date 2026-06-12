@@ -142,7 +142,7 @@
             </div>
 
             {{-- ── My characters (read-only) ────────────── --}}
-            <section class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
+            <section class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <div class="mb-3 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <span class="grid h-6 w-6 place-items-center rounded-md bg-seal font-serifsc text-sm text-white">字</span>
