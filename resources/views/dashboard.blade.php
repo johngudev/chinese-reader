@@ -141,12 +141,12 @@
                 </section>
             </div>
 
-            {{-- ── Library: recent texts ────────────────────── --}}
+            {{-- ── History: recent texts ────────────────────── --}}
             <section class="mt-6 rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                 <div class="mb-4 flex items-center justify-between">
                     <div class="flex items-center gap-2">
                         <span class="grid h-6 w-6 place-items-center rounded-md bg-seal font-serifsc text-sm text-white">读</span>
-                        <h2 class="font-serifsc text-lg font-bold text-gray-900">Your library</h2>
+                        <h2 class="font-serifsc text-lg font-bold text-gray-900">Your History</h2>
                     </div>
                     <a href="{{ route('history') }}" class="text-sm text-gray-500 underline decoration-gray-300 underline-offset-4 transition hover:text-seal">
                         全部 · All texts →
