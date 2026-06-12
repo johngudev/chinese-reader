@@ -837,3 +837,82 @@ Route::get('/outreach', function () {
         'power_users'   => ['count' => $power->count(),   'users' => $power],
     ], 200, [], JSON_PRETTY_PRINT);
 })->middleware('auth');
+
+//Dashboard
+Route::get('/dash', function () {
+    $user = auth()->user();
+
+    // ── texts: totals + unique characters seen ──────────────
+    $texts = $user->generatedTexts()->latest()->limit(500)->pluck('generated_text');
+    $textsTotal = $user->generatedTexts()->count();
+
+    preg_match_all('/\p{Han}/u', $texts->implode(''), $m);
+    $charsSeen = count(array_unique($m[0]));
+
+    // ── activity: per-day counts, last 30 days, zero-filled ─
+    $raw = $user->generatedTexts()
+        ->where('created_at', '>=', now()->subDays(29)->startOfDay())
+        ->selectRaw('DATE(created_at) as d, COUNT(*) as c')
+        ->groupBy('d')->pluck('c', 'd');
+
+    $activityLabels = [];
+    $activityCounts = [];
+    for ($i = 29; $i >= 0; $i--) {
+        $day = now()->subDays($i)->toDateString();
+        $activityLabels[] = now()->subDays($i)->format('M j');
+        $activityCounts[] = (int) ($raw[$day] ?? 0);
+    }
+
+    // ── streaks: walk distinct generation dates ─────────────
+    $dates = $user->generatedTexts()
+        ->selectRaw('DISTINCT DATE(created_at) as d')
+        ->orderBy('d')->pluck('d')->all();
+
+    $streakLongest = 0; $run = 0; $prev = null;
+    foreach ($dates as $d) {
+        $run = ($prev && \Carbon\Carbon::parse($d)->diffInDays($prev) === 1) ? $run + 1 : 1;
+        $streakLongest = max($streakLongest, $run);
+        $prev = \Carbon\Carbon::parse($d);
+    }
+    $last = $dates ? \Carbon\Carbon::parse(end($dates)) : null;
+    $streakCurrent = ($last && $last->diffInDays(today()) <= 1) ? $run : 0;
+
+    // ── saved words ─────────────────────────────────────────
+    $wordsTotal  = $user->savedWords()->count();
+    $wordsRecent = $user->savedWords()->where('created_at', '>=', now()->subWeek())->count();
+    $deck        = $user->savedWords()->latest()->limit(5)->get(['id', 'word', 'pinyin', 'english']);
+
+    // ── progress toward next milestone ──────────────────────
+    $milestones = [250, 500, 1000, 2000, 3000, 4000, 5000];
+    $current = count($user->charactersList?->characters_list ?? []);
+
+    $next = collect($milestones)->first(fn ($m) => $current < $m);
+    $progress = [
+        'current'   => $current,
+        'milestone' => $next ?? 5000,
+        'pct'       => $next ? (int) round(100 * $current / $next) : 100,
+        'maxed'     => $next === null,
+    ];
+
+    // ── library: recent texts ───────────────────────────────
+    $recentTexts = $user->generatedTexts()->latest()->limit(6)
+    ->get(['id', 'generated_text', 'created_at'])
+    ->map(function ($t) {
+        $chinese = trim(strip_tags(Str::before($t->generated_text, '<hr>')));
+        $english = trim(strip_tags(Str::after($t->generated_text, '<hr>')));
+        $english = preg_replace('/\*+/', '', $english);   // strip markdown ** from titles
+
+        return [
+            'id'      => $t->id,
+            'snippet' => mb_substr($chinese, 0, 24) . (mb_strlen($chinese) > 24 ? '…' : ''),
+            'date'    => $t->created_at->format('M j'),
+            'chars'   => mb_strlen(preg_replace('/[^\p{Han}]/u', '', $chinese)),
+        ];
+    });
+
+    return view('dashboard', compact(
+        'streakCurrent', 'streakLongest', 'charsSeen',
+        'wordsTotal', 'wordsRecent', 'textsTotal',
+        'activityLabels', 'activityCounts', 'progress', 'deck', 'recentTexts'
+    ) + ['memberSince' => $user->created_at->format('M Y')]);
+})->middleware('auth')->name('dash');
