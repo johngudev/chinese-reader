@@ -791,18 +791,15 @@ Route::get('/characters', function () {
 
     $characters = auth()->user()->charactersList?->characters_list ?? [];
 
-    if($characters === []) {
-        $vocabLists = [
-            /*['vocab_list_name' => '250 Most Common Characters', 'characters' => array_slice($characters, 0, 250)],*/
-            /*['vocab_list_name' => '500 Most Common Characters', 'characters' => array_slice($characters, 0, 500)],*/
-            ['vocab_list_name' => '(Old) HSK Level 1',          'characters' => $characters_hsk_1],
-            ['vocab_list_name' => '(Old) HSK Level 2',          'characters' => array_values(array_unique(array_merge($characters_hsk_1, $characters_hsk_2)))],
-            ['vocab_list_name' => '(Old) HSK Level 3',          'characters' => array_values(array_unique(array_merge($characters_hsk_1, $characters_hsk_2, $characters_hsk_3)))],
-            ['vocab_list_name' => '(Old) HSK Level 4',          'characters' => array_values(array_unique(array_merge($characters_hsk_1, $characters_hsk_2, $characters_hsk_3, $characters_hsk_4)))],
-        ];
-    } else {
-        $vocabLists = [];
-    }
+    $vocabLists = [
+        /*['vocab_list_name' => '250 Most Common Characters', 'characters' => array_slice($characters, 0, 250)],*/
+        /*['vocab_list_name' => '500 Most Common Characters', 'characters' => array_slice($characters, 0, 500)],*/
+        ['vocab_list_name' => '(Old) HSK Level 1',          'characters' => $characters_hsk_1],
+        ['vocab_list_name' => '(Old) HSK Level 2',          'characters' => array_values(array_unique(array_merge($characters_hsk_1, $characters_hsk_2)))],
+        ['vocab_list_name' => '(Old) HSK Level 3',          'characters' => array_values(array_unique(array_merge($characters_hsk_1, $characters_hsk_2, $characters_hsk_3)))],
+        ['vocab_list_name' => '(Old) HSK Level 4',          'characters' => array_values(array_unique(array_merge($characters_hsk_1, $characters_hsk_2, $characters_hsk_3, $characters_hsk_4)))],
+    ];
+
 
     return view('characters', ['characters' => $characters, 'vocabLists' => $vocabLists]);
 })->middleware('auth')->name('characters');;
