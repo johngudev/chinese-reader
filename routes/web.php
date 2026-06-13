@@ -918,3 +918,9 @@ Route::get('/dash', function () {
         'activityLabels', 'activityCounts', 'progress', 'deck', 'recentTexts', 'myCharacters'
     ) + ['memberSince' => $user->created_at->format('M Y')]);
 })->middleware('auth')->name('dash');
+
+Route::get('/saved-words', function () {
+    $words = auth()->user()->savedWords()->latest()->paginate(50, ['id', 'generated_text_id', 'word', 'pinyin', 'english']);
+
+    return view('saved-words', ['words' => $words]);
+})->middleware('auth')->name('saved-words');
