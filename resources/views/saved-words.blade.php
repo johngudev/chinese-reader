@@ -43,30 +43,29 @@
                         <template x-for="w in words" :key="w.id">
                             <li class="group relative">
 
-                                {{-- Card: links to the source text when we know it --}}
-                                <component
-                                    :is="w.source_id ? 'a' : 'div'"
-                                    x-bind="w.source_id ? { href: '/texts/' + w.source_id, target: '_blank', rel: 'noopener' } : {}"
-                                    class="flex items-start gap-4 rounded-2xl bg-white px-5 py-5 pr-12 shadow-sm ring-1 ring-gray-200 transition sm:gap-6 sm:px-7"
-                                    :class="w.source_id ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow hover:ring-indigo-300' : ''"
-                                >
+                                <a :href="w.source_id ? '/texts/' + w.source_id : null"
+                                :target="w.source_id ? '_blank' : null"
+                                rel="noopener"
+                                class="flex items-start gap-4 rounded-2xl bg-white px-5 py-5 pr-12 shadow-sm ring-1 ring-gray-200 transition sm:gap-6 sm:px-7"
+                                :class="w.source_id ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow hover:ring-indigo-300' : 'cursor-default'">
+
                                     {{-- big character --}}
                                     <span class="font-serifsc text-5xl leading-none text-gray-900 shrink-0 sm:text-6xl" x-text="w.word"></span>
 
-                                    {{-- pinyin (red, top) + english (under) --}}
+                                    {{-- pinyin (red) + english --}}
                                     <div class="min-w-0 flex-1 pt-1">
                                         <span class="block text-base font-medium text-seal sm:text-lg" x-text="w.pinyin"></span>
                                         <span class="mt-1 block text-sm leading-snug text-gray-600 sm:text-base" x-text="w.english"></span>
                                     </div>
 
-                                    {{-- open-source hint --}}
+                                    {{-- open-source hint, only when linkable --}}
                                     <span x-show="w.source_id"
                                         class="pointer-events-none absolute bottom-3 right-4 text-[11px] text-gray-300 opacity-0 transition group-hover:opacity-100">
                                         打开课文 · open text ↗
                                     </span>
-                                </component>
+                                </a>
 
-                                {{-- × delete, pinned top-right, above the card link --}}
+                                {{-- × delete --}}
                                 <button @click="remove(w)"
                                     class="absolute right-3 top-3 z-10 grid h-7 w-7 place-items-center rounded-full text-gray-300 transition hover:bg-seal/10 hover:text-seal"
                                     aria-label="Remove">
