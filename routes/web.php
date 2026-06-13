@@ -243,7 +243,7 @@ Route::get('/retention', function () {
     }
 
     $registered = User::count();
-    $activated  = $users->count();
+    $activated  = GeneratedText::distinct()->count('user_id');
 
     return view('retention-curve', [
         'labels'           => $labels,
