@@ -220,7 +220,7 @@ Route::get('/retention', function () {
         INNER JOIN generated_texts g ON g.user_id = u.id
         WHERE u.created_at > ?
         GROUP BY u.id, u.created_at
-    ', ['2026-06-07']);
+    ', ['2026-06-05']);
 
     $users = collect($rows)->map(fn ($r) => (object) [
         'age'      => (int) $r->account_age,
@@ -231,7 +231,7 @@ Route::get('/retention', function () {
     $percents = [];
     $eligibleCounts = [];
 
-    for ($n = 0; $n <= ((int) $users->max('age')); $n++) {
+    for ($n = 0; $n <= ((int) $users->max('age')-2); $n++) {
         $eligible = $users->filter(fn ($u) => $u->age >= $n);
         if ($eligible->isEmpty()) break;
 
