@@ -218,8 +218,9 @@ Route::get('/retention', function () {
                DATEDIFF(MAX(g.created_at), u.created_at) AS lifespan_days
         FROM users u
         INNER JOIN generated_texts g ON g.user_id = u.id
+        WHERE u.created_at > ?
         GROUP BY u.id, u.created_at
-    ');
+    ', ['2026-06-07']);
 
     $users = collect($rows)->map(fn ($r) => (object) [
         'age'      => (int) $r->account_age,
