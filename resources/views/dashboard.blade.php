@@ -79,7 +79,7 @@
                     <div class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
                         <div class="mb-4 flex items-center justify-between">
                             <h2 class="font-serifsc text-lg font-bold text-gray-900">Reading activity</h2>
-                            <span class="text-xs text-gray-500">Last 30 days</span>
+                            <span class="text-xs text-gray-500">Last 7 days</span>
                         </div>
                         <div class="h-56"><canvas id="activity"></canvas></div>
                     </div>
