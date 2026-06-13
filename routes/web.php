@@ -851,13 +851,13 @@ Route::get('/dash', function () {
 
     // ── activity: per-day counts, last 30 days, zero-filled ─
     $raw = $user->generatedTexts()
-        ->where('created_at', '>=', now()->subDays(29)->startOfDay())
+        ->where('created_at', '>=', now()->subDays(6)->startOfDay())
         ->selectRaw('DATE(created_at) as d, COUNT(*) as c')
         ->groupBy('d')->pluck('c', 'd');
 
     $activityLabels = [];
     $activityCounts = [];
-    for ($i = 29; $i >= 0; $i--) {
+    for ($i = 6; $i >= 0; $i--) {
         $day = now()->subDays($i)->toDateString();
         $activityLabels[] = now()->subDays($i)->format('M j');
         $activityCounts[] = (int) ($raw[$day] ?? 0);
