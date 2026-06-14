@@ -91,9 +91,9 @@
             <x-responsive-nav-link :href="route('history')" :active="request()->routeIs('history')">
                 {{ __('History') }}
             </x-responsive-nav-link>
-            <x-nav-link :href="route('saved-words')" :active="request()->routeIs('saved-words')">
+            <x-responsive-nav-link :href="route('saved-words')" :active="request()->routeIs('saved-words')">
                 {{ __('Saved Words') }}
-            </x-nav-link>
+            </x-responsive-nav-link>
         </div>
 
         <!-- Responsive Settings Options -->
