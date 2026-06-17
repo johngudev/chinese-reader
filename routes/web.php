@@ -27,9 +27,6 @@ Route::get('users', function () {
 })->middleware(['auth', 'verified']);
 
 Route::get('/', function () {
-
-    
-
     return view('welcome', ['story' => session('story'), 'chinese' => session('chinese'), 'english' => session('english'), 'definitions' => session('definitions')]);
 });
 
@@ -40,72 +37,13 @@ Route::post('/', function () {
     $characters = array_values(array_unique($matches[0]));
     $characters = array_slice($characters,0,1100);
 
-    $char_diversity_note = "";
+    // Creates the story using the Anthropic API
+    $story = getStoryFromAnthropic($userId = null, $characters)['story'];
 
-    if (count($characters) > 500) {
-        //Character diversity for over 500 characters
-        if (rand(1, 100) <= 40) {
-            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
-        }
-    }
-
-    if (rand(1, 100) <= 50) {
-        $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
-    }
-
-    // Diversity for HSK4
-    if ((count($characters) > 1000)) {
-        $subvocab_ratio = 0.7;
-
-        $char_cutoff_index = round($subvocab_ratio * 1000);
-
-        $freq_chars = (config('vocab.characters'));
-
-        $simpler_chars = array_slice($freq_chars,0,$char_cutoff_index);
-
-        $difficult_chars = array_values(array_diff($characters, $simpler_chars));
-
-        $keys_diff_char_sample = array_rand($difficult_chars, 100);
-
-        $diff_char_sample = array_map(
-            fn($k) => $difficult_chars[$k],
-            $keys_diff_char_sample
-        );
-
-        $diff_char_sample_string = implode(' ', $diff_char_sample);
-
-        $char_diversity_note = $char_diversity_note . " Focus on using the more difficult characters I know, such as ".$diff_char_sample_string;
-
-        $text_type_number =rand(1,100);
-
-        if ($text_type_number <= 40) {
-            $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
-        } else if($text_type_number < 70)  {
-            $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
-        }
-    }
-
+    // gets the CharList used
     $charList = implode(' ', $characters);
 
-
-
-    //throttle request to max first 1,0000 characters
-
-    $response = Http::withHeaders([
-        'x-api-key'         => env('X_API_KEY'),
-        'anthropic-version' => '2023-06-01',
-        'content-type'      => 'application/json',
-    ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
-        'model'      => 'claude-haiku-4-5-20251001',
-        'max_tokens' => 2000,
-        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
-        'messages'   => [
-            ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters." . $char_diversity_note],
-        ],
-    ]);
-
-    $story = $response->json('content.0.text');
-
+    //post-processing of the story from Anthropic API 
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
 
@@ -159,12 +97,6 @@ Route::post('/', function () {
         }
         // ------------------------------------------------------------------------
     
-
-    GeneratedText::create([
-        'user_id' => null,
-        'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
-        'generated_text' => $response->json('content.0.text'),
-    ]);
 
     return redirect('/')
         ->with('story',       $story)
@@ -272,76 +204,13 @@ Route::post('/generate', function () {
         return redirect('generate');
     }
 
-
-        //throttle request to max first 1,200 characters
-    // $characters = array_slice($characters, 1000);
-    $characters = array_slice($characters,0,1200);
-
-    $char_diversity_note = "";
-
-    if (count($characters) > 500) {
-        //Character diversity for over 500 characters
-        if (rand(1, 100) <= 40) {
-            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
-        }
-    }
-
-
-    if (rand(1, 100) <= 50) {
-        $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
-    }
-
-    // Diversity for HSK4
-    if ((count($characters) > 1000)) {
-        $subvocab_ratio = 0.7;
-
-        $char_cutoff_index = round($subvocab_ratio * 1000);
-
-        $freq_chars = (config('vocab.characters'));
-
-        $simpler_chars = array_slice($freq_chars,0,$char_cutoff_index);
-
-        $difficult_chars = array_values(array_diff($characters, $simpler_chars));
-
-        $keys_diff_char_sample = array_rand($difficult_chars, 100);
-
-        $diff_char_sample = array_map(
-            fn($k) => $difficult_chars[$k],
-            $keys_diff_char_sample
-        );
-
-        $diff_char_sample_string = implode(' ', $diff_char_sample);
-
-        $char_diversity_note = $char_diversity_note . " Focus on using the more difficult characters I know, such as ".$diff_char_sample_string;
-
-        $text_type_number =rand(1,100);
-
-        if ($text_type_number <= 40) {
-            $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
-        } else if($text_type_number < 70)  {
-            $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
-        }
-    }
+    $response = getStoryFromAnthropic($user->id, $characters);
     
 
     $charList = implode(' ', $characters);
 
-    
-
-    $response = Http::withHeaders([
-        'x-api-key'         => env('X_API_KEY'),
-        'anthropic-version' => '2023-06-01',
-        'content-type'      => 'application/json',
-    ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
-        'model'      => 'claude-haiku-4-5-20251001',
-        'max_tokens' => 2000,
-        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
-        'messages'   => [
-            ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}"],
-        ],
-    ]);
-
-    $story = $response->json('content.0.text');
+    $story = $response['story'];
+    $generated = $response['generated'];
 
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
@@ -400,15 +269,9 @@ Route::post('/generate', function () {
     // ------------------------------------------------------------------------
     
 
-    $generated = GeneratedText::create([
-        'user_id' => $user->id,
-        'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
-        'generated_text' => $response->json('content.0.text'),
-    ]);
-
 
     return view('story', [
-        'story' => ($response->json('content.0.text')),
+        'story' => ($story),
         'chinese' => trim($chinese),
         'english' => trim($english),
         'definitions' => $definitions,
@@ -422,79 +285,14 @@ Route::get('/generate', function () {
     $user       = auth()->user();
     $characters = $user->charactersList?->characters_list ?? [];
 
-    if (empty($characters)) {
-        return response('Your character library is empty — add some first.');
-    }
+    // Creates the story using the Anthropic API
+    $response = getStoryFromAnthropic($user->id, $characters);
 
-    //throttle request to max first 1,200 characters
-    // $characters = array_slice($characters, 1000);
-    $characters = array_slice($characters,0,1200);
+    $story = $response['story'];
+    $generated = $response['generated'];
 
-    $char_diversity_note = "";
-
-    if (count($characters) > 500) {
-        //Character diversity for over 500 characters
-        if (rand(1, 100) <= 40) {
-            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
-        }
-    }
-
-
-    if (rand(1, 100) <= 50) {
-        $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
-    }
-
-    // Diversity for HSK4
-    if ((count($characters) > 1000)) {
-        $subvocab_ratio = 0.7;
-
-        $char_cutoff_index = round($subvocab_ratio * 1000);
-
-        $freq_chars = (config('vocab.characters'));
-
-        $simpler_chars = array_slice($freq_chars,0,$char_cutoff_index);
-
-        $difficult_chars = array_values(array_diff($characters, $simpler_chars));
-
-        $keys_diff_char_sample = array_rand($difficult_chars, 100);
-
-        $diff_char_sample = array_map(
-            fn($k) => $difficult_chars[$k],
-            $keys_diff_char_sample
-        );
-
-        $diff_char_sample_string = implode(' ', $diff_char_sample);
-
-        $char_diversity_note = $char_diversity_note . " Focus on using the more difficult characters I know, such as ".$diff_char_sample_string;
-
-        $text_type_number =rand(1,100);
-
-        if ($text_type_number <= 40) {
-            $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
-        } else if($text_type_number < 70)  {
-            $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
-        }
-    }
-    
-
+    // gets the CharList used
     $charList = implode(' ', $characters);
-
-    
-
-    $response = Http::withHeaders([
-        'x-api-key'         => env('X_API_KEY'),
-        'anthropic-version' => '2023-06-01',
-        'content-type'      => 'application/json',
-    ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
-        'model'      => 'claude-haiku-4-5-20251001',
-        'max_tokens' => 2000,
-        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
-        'messages'   => [
-            ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}"],
-        ],
-    ]);
-
-    $story = $response->json('content.0.text');
 
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
@@ -553,15 +351,9 @@ Route::get('/generate', function () {
     // ------------------------------------------------------------------------
     
 
-    $generated = GeneratedText::create([
-        'user_id' => $user->id,
-        'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
-        'generated_text' => $response->json('content.0.text'),
-    ]);
-
 
     return view('story', [
-        'story' => ($response->json('content.0.text')),
+        'story' => $story,
         'chinese' => trim($chinese),
         'english' => trim($english),
         'definitions' => $definitions,
@@ -925,3 +717,81 @@ Route::get('/saved-words', function () {
 
     return view('saved-words', ['words' => $words]);
 })->middleware('auth')->name('saved-words');
+
+function getStoryFromAnthropic($userId, $characters) {
+
+    $char_diversity_note = "";
+
+    if (count($characters) > 500) {
+        //Character diversity for over 500 characters
+        if (rand(1, 100) <= 40) {
+            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
+        }
+    }
+
+    if (rand(1, 100) <= 50) {
+        $char_diversity_note = $char_diversity_note . " Do not talk about animals or fruit in your text.";
+    }
+
+    // Diversity for HSK4
+    if ((count($characters) > 1000)) {
+        $subvocab_ratio = 0.7;
+
+        $char_cutoff_index = round($subvocab_ratio * 1000);
+
+        $freq_chars = (config('vocab.characters'));
+
+        $simpler_chars = array_slice($freq_chars,0,$char_cutoff_index);
+
+        $difficult_chars = array_values(array_diff($characters, $simpler_chars));
+
+        $keys_diff_char_sample = array_rand($difficult_chars, 100);
+
+        $diff_char_sample = array_map(
+            fn($k) => $difficult_chars[$k],
+            $keys_diff_char_sample
+        );
+
+        $diff_char_sample_string = implode(' ', $diff_char_sample);
+
+        $char_diversity_note = $char_diversity_note . " Focus on using the more difficult characters I know, such as ".$diff_char_sample_string;
+
+        $text_type_number =rand(1,100);
+
+        if ($text_type_number <= 40) {
+            $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
+        } else if($text_type_number < 70)  {
+            $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
+        }
+    }
+
+    $charList = implode(' ', $characters);
+
+
+
+    //throttle request to max first 1,0000 characters
+
+    $response = Http::withHeaders([
+        'x-api-key'         => env('X_API_KEY'),
+        'anthropic-version' => '2023-06-01',
+        'content-type'      => 'application/json',
+    ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
+        'model'      => 'claude-haiku-4-5-20251001',
+        'max_tokens' => 2000,
+        'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
+        'messages'   => [
+            ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters." . $char_diversity_note],
+        ],
+    ]);
+
+    $story = $response->json('content.0.text');
+
+    // save the story to the database
+    $generated = GeneratedText::create([
+        'user_id' => $userId,
+        'prompt' => "Characters I know: {$charList}\n\nWrite me a text using only these characters. {$char_diversity_note}",
+        'generated_text' => $response->json('content.0.text'),
+    ]);
+
+    return ['story' => $story, 'charList' => $charList, 'char_diversity_note' => $char_diversity_note, 'generated' => $generated];
+}
