@@ -40,63 +40,11 @@ Route::post('/', function () {
     // Creates the story using the Anthropic API
     $story = getStoryFromAnthropic($userId = null, $characters)['story'];
 
-    // gets the CharList used
-    $charList = implode(' ', $characters);
-
     //post-processing of the story from Anthropic API 
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
-
-        // ---- Build $definitions: segment the Chinese and look up each word ----
-        $chineseText = $chinese;                  // Chinese only — drop the English translation
-        preg_match_all('/\p{Han}/u', $chineseText, $matches);             // keep only Han characters
-        $chars  = $matches[0];
-        $n      = count($chars);
-        $maxLen = 8;
-    
-        // 1) every contiguous substring (length 1..maxLen) that appears in the text
-        $candidates = [];
-        for ($i = 0; $i < $n; $i++) {
-            for ($len = 1; $len <= min($maxLen, $n - $i); $len++) {
-                $candidates[implode('', array_slice($chars, $i, $len))] = true;
-            }
-        }
-    
-        // 2) one query; group by simplified because a word can have several entries (homographs, e.g. 行)
-        $dict = DB::table('cedict')
-            ->whereIn('simplified', array_keys($candidates))
-            ->get(['simplified', 'pinyin', 'pinyin_numeric', 'english'])
-            ->groupBy('simplified');
-    
-        // 3) greedy longest-match — no further queries
-        $definitions = [];
-        $i = 0;
-        while ($i < $n) {
-            $matched = null;
-            for ($len = min($maxLen, $n - $i); $len >= 1; $len--) {
-                $word = implode('', array_slice($chars, $i, $len));
-                if (isset($dict[$word])) { $matched = [$word, $len]; break; }
-            }
-    
-            if ($matched) {
-                [$word, $len] = $matched;
-                $definitions[] = [
-                    'word'    => $word,
-                    'entries' => $dict[$word]->map(fn ($e) => [
-                        'pinyin'         => $e->pinyin,
-                        'pinyin_numeric' => $e->pinyin_numeric,
-                        'english'        => $e->english,
-                    ])->all(),
-                ];
-                $i += $len;
-            } else {
-                // a Han character not in the dictionary (rare)
-                $definitions[] = ['word' => $chars[$i], 'entries' => []];
-                $i++;
-            }
-        }
-        // ------------------------------------------------------------------------
-    
+    $chinese = trim($chinese);
+    $definitions = getDefinitions($chinese);
 
     return redirect('/')
         ->with('story',       $story)
@@ -217,58 +165,7 @@ Route::post('/generate', function () {
 
     $chinese = trim($chinese);
 
-    // ---- Build $definitions: segment the Chinese and look up each word ----
-    $chineseText = $chinese;                  // Chinese only — drop the English translation
-    $chars = preg_split('//u', $chinese, -1, PREG_SPLIT_NO_EMPTY);   // ← every char, punctuation included
-    $n     = count($chars);
-
-    $n      = count($chars);
-    $maxLen = 8;
-
-    // 1) every contiguous substring (length 1..maxLen) that appears in the text
-    $candidates = [];
-    for ($i = 0; $i < $n; $i++) {
-        for ($len = 1; $len <= min($maxLen, $n - $i); $len++) {
-            $candidates[implode('', array_slice($chars, $i, $len))] = true;
-        }
-    }
-
-    // 2) one query; group by simplified because a word can have several entries (homographs, e.g. 行)
-    $dict = DB::table('cedict')
-        ->whereIn('simplified', array_keys($candidates))
-        ->get(['simplified', 'pinyin', 'pinyin_numeric', 'english'])
-        ->groupBy('simplified');
-
-    // 3) greedy longest-match — no further queries
-    $definitions = [];
-    $i = 0;
-    while ($i < $n) {
-        $matched = null;
-        for ($len = min($maxLen, $n - $i); $len >= 1; $len--) {
-            $word = implode('', array_slice($chars, $i, $len));
-            if (isset($dict[$word])) { $matched = [$word, $len]; break; }
-        }
-
-        if ($matched) {
-            [$word, $len] = $matched;
-            $definitions[] = [
-                'word'    => $word,
-                'entries' => $dict[$word]->map(fn ($e) => [
-                    'pinyin'         => $e->pinyin,
-                    'pinyin_numeric' => $e->pinyin_numeric,
-                    'english'        => $e->english,
-                ])->all(),
-            ];
-            $i += $len;
-        } else {
-            // a Han character not in the dictionary (rare)
-            $definitions[] = ['word' => $chars[$i], 'entries' => []];
-            $i++;
-        }
-    }
-    // ------------------------------------------------------------------------
-    
-
+    $definitions = getDefinitions($chinese);
 
     return view('story', [
         'story' => ($story),
@@ -291,65 +188,12 @@ Route::get('/generate', function () {
     $story = $response['story'];
     $generated = $response['generated'];
 
-    // gets the CharList used
-    $charList = implode(' ', $characters);
-
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
 
     $chinese = trim($chinese);
 
-    // ---- Build $definitions: segment the Chinese and look up each word ----
-    $chineseText = $chinese;                  // Chinese only — drop the English translation
-    $chars = preg_split('//u', $chinese, -1, PREG_SPLIT_NO_EMPTY);   // ← every char, punctuation included
-    $n     = count($chars);
-
-    $n      = count($chars);
-    $maxLen = 8;
-
-    // 1) every contiguous substring (length 1..maxLen) that appears in the text
-    $candidates = [];
-    for ($i = 0; $i < $n; $i++) {
-        for ($len = 1; $len <= min($maxLen, $n - $i); $len++) {
-            $candidates[implode('', array_slice($chars, $i, $len))] = true;
-        }
-    }
-
-    // 2) one query; group by simplified because a word can have several entries (homographs, e.g. 行)
-    $dict = DB::table('cedict')
-        ->whereIn('simplified', array_keys($candidates))
-        ->get(['simplified', 'pinyin', 'pinyin_numeric', 'english'])
-        ->groupBy('simplified');
-
-    // 3) greedy longest-match — no further queries
-    $definitions = [];
-    $i = 0;
-    while ($i < $n) {
-        $matched = null;
-        for ($len = min($maxLen, $n - $i); $len >= 1; $len--) {
-            $word = implode('', array_slice($chars, $i, $len));
-            if (isset($dict[$word])) { $matched = [$word, $len]; break; }
-        }
-
-        if ($matched) {
-            [$word, $len] = $matched;
-            $definitions[] = [
-                'word'    => $word,
-                'entries' => $dict[$word]->map(fn ($e) => [
-                    'pinyin'         => $e->pinyin,
-                    'pinyin_numeric' => $e->pinyin_numeric,
-                    'english'        => $e->english,
-                ])->all(),
-            ];
-            $i += $len;
-        } else {
-            // a Han character not in the dictionary (rare)
-            $definitions[] = ['word' => $chars[$i], 'entries' => []];
-            $i++;
-        }
-    }
-    // ------------------------------------------------------------------------
-    
+    $definitions = getDefinitions($chinese);
 
 
     return view('story', [
