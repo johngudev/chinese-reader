@@ -20,6 +20,10 @@ use Illuminate\Http\Request;
 |
 */
 
+Route::get('/premium', function () {
+    return view('premium');
+})->middleware('auth')->name('premium');
+
 Route::get('users', function () {
     abort_unless(auth()->id() === 1, 403);
 
