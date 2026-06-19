@@ -26,9 +26,9 @@ Route::get('/billing', function (Request $request) {
     return $request->user()->redirectToBillingPortal(route('dashboard'));
 })->middleware('auth')->name('billing');
 
-Route::get('/premium', function () {
+/* Route::get('/premium', function () {
     return view('premium');
-})->middleware('auth')->name('premium');
+})->middleware('auth')->name('premium'); */
 
 Route::post('/subscribe', function (Request $request) {
     return $request->user()
