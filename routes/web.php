@@ -173,6 +173,7 @@ Route::post('/generate', function () {
 
     $variety = $user->isPremium() ? request('variety') : null;
 
+
     $response = getStoryFromAnthropic($user->id, $characters, $variety);
     
 

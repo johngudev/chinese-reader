@@ -78,6 +78,7 @@ if (! function_exists('getStoryFromAnthropic')) {
             $char_diversity_note .= $styleMap[$variety];
         }
 
+
         if (count($characters) > 500) {
             //Character diversity for over 500 characters
             if (rand(1, 100) <= 40) {
@@ -114,15 +115,22 @@ if (! function_exists('getStoryFromAnthropic')) {
 
             $text_type_number =rand(1,100);
 
-            if ($text_type_number <= 40) {
-                $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
-            } else if($text_type_number < 70)  {
-                $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
+            if(!isset($styleMap[$variety])) {
+                //provides variety when does not exist
+
+                if ($text_type_number <= 40) {
+                    $char_diversity_note = $char_diversity_note . " The text should resemble a news story (you may include well-known proper nouns, like America, England, China, Japan, etc., instead of a narrative.";
+                } else if($text_type_number < 70)  {
+                    $char_diversity_note = $char_diversity_note . " The text should resemble an information article, such as Encyclopedia entry, rather than a narrative.";
+                }
             }
+
         }
 
         $charList = implode(' ', $characters);
 
+
+                dd($char_diversity_note);
 
 
         //throttle request to max first 1,0000 characters
