@@ -54,18 +54,28 @@
                             @csrf
 
                             @if (auth()->user()->isPremium())
-                                <select name="variety"
-                                    class="rounded-lg border-0 bg-white/90 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm focus:ring-2 focus:ring-white">
-                                    <option value="">Surprise me</option>
-                                    <option value="story">Story</option>
-                                    <option value="news">News</option>
-                                    <option value="article">Article</option>
-                                    <option value="dialogue">Dialogue</option>
-                                </select>
+                                <div class="w-72 max-w-full">
+                                    <label for="variety" class="mb-1.5 block text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80">
+                                        Choose your text type
+                                    </label>
+                                    <div class="relative">
+                                        <select id="variety" name="variety"
+                                            class="w-full appearance-none rounded-xl border-2 border-white bg-white px-4 py-3 pr-11 text-base font-bold text-indigo-700 shadow-lg transition hover:bg-indigo-50 focus:outline-none focus:ring-4 focus:ring-white/60">
+                                            <option value="">Surprise me</option>
+                                            <option value="story">Story</option>
+                                            <option value="news">News</option>
+                                            <option value="article">Article</option>
+                                        </select>
+                                        <svg class="pointer-events-none absolute right-3.5 top-1/2 h-5 w-5 -translate-y-1/2 text-indigo-500"
+                                            xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                            <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+                                        </svg>
+                                    </div>
+                                </div>
                             @endif
 
                             <button type="submit"
-                                class="inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
+                                class="inline-flex w-72 max-w-full items-center justify-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
                                 生成新故事 · Generate a text
                             </button>
                         </form>
