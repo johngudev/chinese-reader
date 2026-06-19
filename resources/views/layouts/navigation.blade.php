@@ -31,10 +31,10 @@
                         <x-nav-link :href="route('billing')" :active="request()->routeIs('billing')">
                             {{ __('Billing') }}
                         </x-nav-link>
-                    @else
-                        <!-- x-nav-link :href="route('premium')" :active="request()->routeIs('premium')" class="font-bold text-seal">
+                    @elseif (! auth()->user()->isPremium())
+                        <x-nav-link :href="route('premium')" :active="request()->routeIs('premium')" class="font-bold text-seal">
                             {{ __('Premium ✨') }}
-                        </x-nav-link -->
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -107,10 +107,10 @@
                 <x-responsive-nav-link :href="route('billing')" :active="request()->routeIs('billing')">
                     {{ __('Billing') }}
                 </x-responsive-nav-link>
-            @else
-                <!-- <x-responsive-nav-link :href="route('premium')" :active="request()->routeIs('premium')" class="font-bold text-seal">
+            @elseif (! auth()->user()->isPremium())
+                <x-responsive-nav-link :href="route('premium')" :active="request()->routeIs('premium')" class="font-bold text-seal">
                     {{ __('Premium ✨') }}
-                </x-responsive-nav-link> -->
+                </x-responsive-nav-link>
             @endif
         </div>
 
