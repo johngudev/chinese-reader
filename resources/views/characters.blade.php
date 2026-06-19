@@ -96,6 +96,10 @@
                         class="hidden"
                         placeholder="">{{ implode(' ', $characters) }}</textarea>
 
+                        @if (auth()->user()->isPremium())
+                            <x-text-type-fieldset theme="dark" class="mx-auto mt-2" />
+                        @endif
+
                         <button type="submit"
                             onclick="document.getElementById('loading-modal').classList.remove('hidden')"
                             class="mt-2 inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
