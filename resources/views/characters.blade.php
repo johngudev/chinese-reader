@@ -102,7 +102,7 @@
 
                         <button type="submit"
                             onclick="document.getElementById('loading-modal').classList.remove('hidden')"
-                            class="mt-2 inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
+                            class="mt-4 w-72 max-w-full inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
                             生成新故事 · Generate a text
                         </button>
                     </form>
