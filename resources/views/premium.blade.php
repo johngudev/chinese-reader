@@ -54,6 +54,7 @@
                 <form method="POST" action="{{ route('subscribe') }}" class="mt-6">
                     @csrf
                     <button type="submit" 
+                        onclick="gtag('event', 'upgrade_click', { transport_type: 'beacon' })"
                         class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-seal px-6 py-3 font-semibold text-white transition hover:opacity-90">
                         升级 · Upgrade — $8/month
                     </button>
@@ -70,4 +71,10 @@
 
         </div>
     </div>
+    <script>
+        //Log premium interest
+        window.addEventListener('load', () => {
+            gtag('event', 'premium_view');
+        });
+    </script>
 </x-app-layout>
