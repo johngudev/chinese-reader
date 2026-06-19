@@ -23,7 +23,7 @@
 
                     @if (auth()->user()->isPremium())
                         {{-- Footer / actions for Premium --}}
-                        <div class="flex flex-col items-center gap-4 border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12">
+                        <div class="no-print flex flex-col items-center gap-4 border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12">
                             <span class="text-sm text-gray-500">
                                 {{ preg_match_all('/\p{Han}/u', $story) }} Chinese characters are in this text.
                             </span>
@@ -43,7 +43,7 @@
                         </div>
                     @else
                     {{-- Footer / actions for Free versino--}}
-                    <div class="flex items-center justify-center sm:justify-between border-t border-gray-100 bg-gray-50 px-8 py-4 sm:px-12">
+                    <div class="no-print flex items-center justify-center sm:justify-between border-t border-gray-100 bg-gray-50 px-8 py-4 sm:px-12">
                         <span class="text-sm text-gray-500 hidden sm:inline">
                             {{ preg_match_all('/\p{Han}/u', $story) }} Chinese characters are in this text.
                         </span>
@@ -115,7 +115,7 @@
         <div
             x-data="savedWords({ initial: @js($savedWords) })"
             @word-saved.window="add($event.detail)"
-            class="mx-auto max-w-3xl bg-gray-50 px-8 py-6 sm:px-12"
+            class="no-print mx-auto max-w-3xl bg-gray-50 px-8 py-6 sm:px-12"
         >
             <h3 class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">生词 · Words you looked up</h3>
             <p x-show="words.length === 0" class="mt-2 text-sm text-gray-400">Tap a word above to add it here.</p>

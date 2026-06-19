@@ -9,6 +9,47 @@
 {{-- Reading area --}}
 <article class="pinyin-off px-8 py-10 sm:px-12 sm:py-14 bg-white relative">
 
+    @if(auth()->user()->isPremium())
+    {{-- Pinyin toggle + Print (top right) --}}
+    <div class="absolute top-8 right-4 sm:right-8 flex items-center gap-4">
+        <label class="inline-flex cursor-pointer select-none items-center gap-3">
+            <span class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">Pinyin</span>
+            <span class="relative inline-block h-6 w-11">
+                <input type="checkbox" id="pinyin-toggle" class="peer sr-only">
+                <span class="absolute inset-0 rounded-full bg-gray-300 transition-colors duration-200 peer-checked:bg-seal"></span>
+                <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 peer-checked:translate-x-5"></span>
+            </span>
+        </label>
+
+        {{-- Print / Download --}}
+        <button type="button" onclick="window.print()" aria-label="Print or download"
+            class="no-print inline-flex h-8 w-8 items-center justify-center rounded-full text-gray-500 transition hover:bg-gray-100 hover:text-seal">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke-width="1.6" stroke="currentColor" class="h-5 w-5">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M6.72 13.829c-.24.03-.48.062-.72.096m.72-.096a42.4 42.4 0 0 1 10.56 0m-10.56 0L6.34 18m10.94-4.171c.24.03.48.062.72.096m-.72-.096L17.66 18m0 0 .229 2.523a1.125 1.125 0 0 1-1.12 1.227H7.231c-.662 0-1.18-.568-1.12-1.227L6.34 18m11.318 0h1.091A2.25 2.25 0 0 0 21 15.75V9.456c0-1.081-.768-2.015-1.837-2.175a48 48 0 0 0-1.913-.247M6.34 18H5.25A2.25 2.25 0 0 1 3 15.75V9.456c0-1.081.768-2.015 1.837-2.175a48 48 0 0 1 1.913-.247m10.5 0a48.5 48.5 0 0 0-10.5 0m10.5 0V3.375c0-.621-.504-1.125-1.125-1.125h-8.25c-.621 0-1.125.504-1.125 1.125v3.659M18 10.5h.008v.008H18V10.5Z" />
+            </svg>
+        </button>
+
+        {{-- Styling --}}
+        <style media="print">
+            @page { margin: 0.2cm 0.5cm; }
+
+            /* hide chrome + interactive bits */
+            nav, header, .no-print,
+            #pinyin-toggle, label:has(#pinyin-toggle),   /* pinyin switch */
+            #word-tooltip { display: none !important; }
+
+            /* the passage itself */
+            article { box-shadow: none !important; }
+            #generated-chinese-passage {
+                font-family: 'Noto Serif SC', serif;
+                font-size: 18px;
+                line-height: 2.1;
+            }
+        </style>
+    </div>
+    @else
     {{-- Pinyin toggle (top right) --}}
     <label class="absolute top-8 right-4 sm:top-8 sm:right-8 inline-flex cursor-pointer select-none items-center gap-3">
         <span class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">Pinyin</span>
@@ -18,6 +59,7 @@
             <span class="absolute left-0.5 top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform duration-200 peer-checked:translate-x-5"></span>
         </span>
     </label>
+    @endif
 
     <p id="generated-chinese-passage" class="whitespace-pre-line text-3xl leading-loose tracking-wide text-gray-900 mt-4 mb-8"
         style="font-family: 'Noto Serif SC', 'Songti SC', serif;">
