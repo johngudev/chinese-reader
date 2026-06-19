@@ -47,12 +47,30 @@
                         <p class="max-w-sm text-sm text-white/80">
                             We'll write you a text using only the characters you know.
                         </p>
-                        <a href="{{ url('/generate') }}"
-                        onclick="document.getElementById('loading-modal').classList.remove('hidden')"
-                        class="mt-2 inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
-                            生成新故事 · Generate a text
-                        </a>
+
+                        <form method="POST" action="{{ url('/generate') }}"
+                            onsubmit="document.getElementById('loading-modal').classList.remove('hidden')"
+                            class="mt-2 flex flex-col items-center gap-3">
+                            @csrf
+
+                            @if (auth()->user()->isPremium())
+                                <select name="variety"
+                                    class="rounded-lg border-0 bg-white/90 px-3 py-2 text-sm font-medium text-gray-700 shadow-sm focus:ring-2 focus:ring-white">
+                                    <option value="">Surprise me</option>
+                                    <option value="story">Story</option>
+                                    <option value="news">News</option>
+                                    <option value="article">Article</option>
+                                    <option value="dialogue">Dialogue</option>
+                                </select>
+                            @endif
+
+                            <button type="submit"
+                                class="inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
+                                生成新故事 · Generate a text
+                            </button>
+                        </form>
                     </div>
+                    
                 </div>
             @endif
 

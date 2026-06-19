@@ -71,4 +71,14 @@ class User extends Authenticatable
      */
     public function savedWords() { return $this->hasMany(SavedWord::class); }
 
+    /**
+     * Check if the user has an active premium subscription.
+     *
+     * @return bool
+     */
+    public function isPremium(): bool
+    {
+        return $this->subscribed('default');
+    }
+
 }

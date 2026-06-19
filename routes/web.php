@@ -7,7 +7,7 @@ use App\Models\User;
 use App\Models\GeneratedText;
 use App\Models\SavedWord;
 use Illuminate\Http\Request;
-
+use Laravel\Cashier\Http\Controllers\WebhookController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +19,12 @@ use Illuminate\Http\Request;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+
+Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+
+Route::get('/billing', function (Request $request) {
+    return $request->user()->redirectToBillingPortal(route('dashboard'));
+})->middleware('auth')->name('billing');
 
 Route::get('/premium', function () {
     return view('premium');
@@ -165,7 +171,9 @@ Route::post('/generate', function () {
         return redirect('generate');
     }
 
-    $response = getStoryFromAnthropic($user->id, $characters);
+    $variety = $user->isPremium() ? request('variety') : null;
+
+    $response = getStoryFromAnthropic($user->id, $characters, $variety);
     
 
     $charList = implode(' ', $characters);
@@ -575,14 +583,26 @@ Route::get('/saved-words', function () {
     return view('saved-words', ['words' => $words]);
 })->middleware('auth')->name('saved-words');
 
-function getStoryFromAnthropic($userId, $characters) {
+function getStoryFromAnthropic($userId, $characters, $variety = null) {
 
     $char_diversity_note = "";
+
+    // Premium: explicit style choice
+    $styleMap = [
+        'news'     => ' The text should resemble a news story (you may include well-known proper nouns like America, China, Japan).',
+        'article'  => ' The text should resemble an informational/encyclopedia-style article rather than a narrative.',
+        'story'    => ' The text should be a short narrative story.',
+        'dialogue' => ' The text should be a short, natural dialogue between two people.',
+    ];
+
+    if ($variety && isset($styleMap[$variety])) {
+        $char_diversity_note .= $styleMap[$variety];
+    }
 
     if (count($characters) > 500) {
         //Character diversity for over 500 characters
         if (rand(1, 100) <= 40) {
-            $char_diversity_note = " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
+            $char_diversity_note .= " When creating your response, focus on using characters that are more rare in the Chinese language, as this will help me learn more. Also make each text you generate diverse, covering a wide array of contexts, subject matters, styles (fiction, nonfiction, narrative, essay), and so on.";
         }
     }
 
