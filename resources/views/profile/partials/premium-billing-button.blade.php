@@ -4,7 +4,7 @@
             {{ __('Billing') }}
         </h2>
 
-        <p class="my-3 text-sm text-gray-600">
+        <p class="my-4 text-sm text-gray-600">
             {{ __('Manage your billing information and subscription plan in Stripe.') }}
         </p>
     </header>
