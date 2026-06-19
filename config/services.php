@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'stripe' => [
+        'price_id' => env('STRIPE_PRICE_ID'),
+    ],
+
 ];
