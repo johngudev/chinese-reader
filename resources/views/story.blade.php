@@ -75,7 +75,7 @@
                             class="mt-2 flex flex-col items-center gap-3">
                             @csrf
 
-                            @if (auth()->user()->isBilled())
+                            @if (auth()->user()->isPremium())
                                 <x-text-type-fieldset theme="dark" />
                             @endif
 
