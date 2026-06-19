@@ -62,6 +62,10 @@ if (! function_exists('getStoryFromAnthropic')) {
 
         $char_diversity_note = "";
 
+        if($variety == 'surprise') {
+            $variety = ['news', 'article', 'story', 'dialogue'][rand(0, 3)];
+        }
+
         // Premium: explicit style choice
         $styleMap = [
             'news'     => ' The text should resemble a news story (you may include well-known proper nouns like America, China, Japan).',

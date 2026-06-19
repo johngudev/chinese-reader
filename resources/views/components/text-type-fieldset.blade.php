@@ -2,10 +2,13 @@
 
 @php
     $options = [
-        '' => 'Surprise me',
+        '' => 'Default',
         'story' => 'Story',
         'news' => 'News',
         'article' => 'Article',
+        'dialogue' => 'Dialogue',
+        'surprise' => 'Surprise me',
+
     ];
 
     $legendClass = $theme === 'dark' ? 'text-white/80' : 'text-gray-500';
