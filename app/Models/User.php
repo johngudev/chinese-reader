@@ -78,9 +78,23 @@ class User extends Authenticatable
      */
     public function isPremium(): bool
     {
-        if ($this->id == 1) {
+        return $this->isLifetimePro() || $this->isBilled();
+    }
+
+    public function isLifetimePro(): bool
+    {
+        $lifetimeProAccounts = [1]; // Assuming the first user is an admin or special user
+
+        if (in_array($this->id, $lifetimeProAccounts)) {
             return true;
-        } // Assuming the first user is an admin or special user
+        } 
+        else {
+            return false;
+        }
+    }
+
+    public function isBilled(): bool
+    {
         return $this->subscribed('default');
     }
 

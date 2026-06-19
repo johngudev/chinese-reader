@@ -27,7 +27,7 @@
                     <x-nav-link :href="route('saved-words')" :active="request()->routeIs('saved-words')">
                         {{ __('Saved Words') }}
                     </x-nav-link>
-                    @if (auth()->user()->isPremium())
+                    @if (auth()->user()->isBilled())
                         <x-nav-link :href="route('billing')" :active="request()->routeIs('billing')">
                             {{ __('Billing') }}
                         </x-nav-link>
