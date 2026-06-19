@@ -130,7 +130,6 @@ if (! function_exists('getStoryFromAnthropic')) {
         $charList = implode(' ', $characters);
 
 
-                dd($char_diversity_note);
 
 
         //throttle request to max first 1,0000 characters
