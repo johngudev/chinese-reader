@@ -49,14 +49,14 @@
                     </li>
                 </ul>
 
-                {{-- Non-functioning for now — wired up in a later milestone --}}
-                <button type="button" disabled
-                    class="mt-6 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-seal px-6 py-3 font-semibold text-white opacity-60 cursor-not-allowed">
-                    升级 · Upgrade — coming soon
-                </button>
-                <p class="mt-3 text-center text-xs text-gray-400">
-                    Checkout opens in a later release.
-                </p>
+                <form method="POST" action="{{ route('subscribe') }}" class="mt-6">
+                    @csrf
+                    <button type="submit"
+                        class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-seal px-6 py-3 font-semibold text-white transition hover:opacity-90">
+                        升级 · Upgrade — $8/month
+                    </button>
+                </form>
+                
             </section>
 
             {{-- ── Back link ────────────────────────────────── --}}

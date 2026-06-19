@@ -24,6 +24,15 @@ Route::get('/premium', function () {
     return view('premium');
 })->middleware('auth')->name('premium');
 
+Route::post('/subscribe', function (Request $request) {
+    return $request->user()
+        ->newSubscription('default', config('services.stripe.price_id'))
+        ->checkout([
+            'success_url' => route('generate') . '?upgraded=1',
+            'cancel_url'  => route('premium'),
+        ]);
+})->middleware('auth')->name('subscribe');
+
 Route::get('users', function () {
     abort_unless(auth()->id() === 1, 403);
 
