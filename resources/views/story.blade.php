@@ -21,7 +21,47 @@
                     
                     <x-chinese-passage-article :story="$story" :definitions="$definitions" :chinese="$chinese" :english="$english" :textId="$textId" :savedWords="$savedWords"/>
 
-                    {{-- Footer / actions --}}
+                    @if (auth()->user()->isPremium())
+                        {{-- Footer / actions for Premium --}}
+                        <div class="flex flex-col items-center gap-4 border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12">
+                            <span class="text-sm text-gray-500">
+                                {{ preg_match_all('/\p{Han}/u', $story) }} Chinese characters are in this text.
+                            </span>
+
+                            <form method="POST" action="{{ url('/generate') }}"
+                                onsubmit="document.getElementById('loading-modal').classList.remove('hidden')"
+                                class="flex w-full flex-col items-center gap-3">
+                                @csrf
+
+                                <fieldset class="w-72 max-w-full">
+                                    <legend class="mb-2 block w-full text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-gray-500">
+                                        Choose your text type
+                                    </legend>
+                                    <div class="grid grid-cols-2 gap-2">
+                                        @foreach ([
+                                            '' => 'Surprise me',
+                                            'story' => 'Story',
+                                            'news' => 'News',
+                                            'article' => 'Article',
+                                        ] as $value => $label)
+                                            <label class="cursor-pointer">
+                                                <input type="radio" name="variety" value="{{ $value }}" class="peer sr-only" @checked($value === '')>
+                                                <span class="flex items-center justify-center rounded-xl border-2 border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm transition hover:bg-gray-50 peer-checked:border-indigo-600 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-lg peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500">
+                                                    {{ $label }}
+                                                </span>
+                                            </label>
+                                        @endforeach
+                                    </div>
+                                </fieldset>
+
+                                <button type="submit"
+                                    class="inline-flex w-72 max-w-full items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                    生成新故事 · Generate another text
+                                </button>
+                            </form>
+                        </div>
+                    @else
+                    {{-- Footer / actions for Free versino--}}
                     <div class="flex items-center justify-center sm:justify-between border-t border-gray-100 bg-gray-50 px-8 py-4 sm:px-12">
                         <span class="text-sm text-gray-500 hidden sm:inline">
                             {{ preg_match_all('/\p{Han}/u', $story) }} Chinese characters are in this text.
@@ -32,6 +72,7 @@
                             生成新故事 · Generate another text
                         </a>
                     </div>
+                    @endif
 
                 </div>
             @else
