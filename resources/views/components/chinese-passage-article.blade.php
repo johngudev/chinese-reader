@@ -110,7 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // 1) Render the passage as word spans from `definitions`
     passage.innerHTML = '';
-    let lastSpan = null;                                  // ← track the most recent word
+    let lastSpan = null;
     definitions.forEach((token, i) => {
         if (token.entries && token.entries.length) {
             const span = document.createElement('span');
@@ -119,13 +119,21 @@ document.addEventListener('DOMContentLoaded', () => {
             span.dataset.pinyin = token.entries[0].pinyin;
             span.textContent = token.word;
             passage.appendChild(span);
-            lastSpan = span;                             // ← remember it
-        } else if (lastSpan) {
-            // punctuation / unmatched — glue onto the previous word so it can't orphan
-            lastSpan.textContent += token.word;          // ← the one-liner
+            lastSpan = span;
         } else {
-            // no preceding word yet (e.g. text opens with punctuation)
-            passage.appendChild(document.createTextNode(token.word));
+            // punctuation / whitespace / unmatched — may contain newlines.
+            // keep the \n delimiters as their own array elements:
+            token.word.split(/(\r\n|\r|\n)/).forEach(part => {
+                if (part === '') return;
+                if (/[\r\n]/.test(part)) {
+                    passage.appendChild(document.createElement('br')); // real line break
+                    lastSpan = null;                                   // break the glue chain
+                } else if (lastSpan) {
+                    lastSpan.textContent += part;                      // glue punctuation
+                } else {
+                    passage.appendChild(document.createTextNode(part));
+                }
+            });
         }
     });
 
