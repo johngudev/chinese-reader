@@ -74,8 +74,7 @@
                     <p class="max-w-sm text-sm text-white/80">
                         We'll write you a text using only the characters you know.
                     </p>
-                    <a href="{{ url('/generate') }}"
-                        onclick="document.getElementById('loading-modal').classList.remove('hidden')"
+                    <a href="{{ url('/story') }}"
                         class="mt-2 inline-flex items-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">
                         生成新故事 · Generate a text
                     </a>

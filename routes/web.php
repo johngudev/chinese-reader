@@ -207,7 +207,8 @@ Route::post('/generate', function () {
 
 })->middleware('auth');
 
-Route::get('/generate', function () {
+//Removed get generate request
+/*Route::get('/generate', function () {
     $user       = auth()->user();
     $characters = $user->charactersList?->characters_list ?? [];
 
@@ -235,7 +236,7 @@ Route::get('/generate', function () {
         'definitions' => $definitions,
         'textId' => $generated->id,
         'savedWords' => []]);
-})->middleware('auth', 'throttle:100,1440');  // 50 generations per user per 24h;
+})->middleware('auth', 'throttle:100,1440');  // 50 generations per user per 24h; */
 
 
 Route::get('/history', function () {

@@ -16,8 +16,7 @@
                     <p class="mt-3 text-sm text-gray-500">
                         Tap any word while reading a text, and it'll be saved here for review.
                     </p>
-                    <a href="{{ url('/generate') }}"
-                       onclick="document.getElementById('loading-modal').classList.remove('hidden')"
+                    <a href="{{ url('/story') }}"
                        class="mt-5 inline-flex items-center rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-500">
                         读一个故事 · Read a text
                     </a>
