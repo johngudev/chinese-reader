@@ -9,7 +9,7 @@
 {{-- Reading area --}}
 <article class="pinyin-off px-8 py-10 sm:px-12 sm:py-14 bg-white relative">
 
-    @if(auth()->user()->isPremium())
+    @if(auth()->check() && auth()->user()->isPremium())
     {{-- Pinyin toggle + Print (top right) --}}
     <div class="absolute top-8 right-4 sm:right-8 flex items-center gap-4">
         <label class="inline-flex cursor-pointer select-none items-center gap-3">

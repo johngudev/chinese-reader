@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\NewspaperArticleController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
@@ -253,6 +254,8 @@ Route::get('/texts/{text}', function (GeneratedText $text) {
     // Remove markdown bold (** **) from the English text
     $english = str_replace('**', '', $english);
 
+    $definitions = getDefinitions($chinese);
+    
     return view('story', [
         'story' => $text->generated_text,
         'chinese' => trim(strip_tags($chinese)),
@@ -283,6 +286,33 @@ Route::delete('/saved-words/{savedWord}', function (SavedWord $savedWord) {
     $savedWord->delete();
     return response()->noContent();
 })->middleware('auth');
+
+/*
+|--------------------------------------------------------------------------
+| Newspaper Articles
+|--------------------------------------------------------------------------
+| Public reading (index + show) is open to guests and free users.
+| Authoring (create/store/edit/update/destroy) is admin-only — the gate
+| lives in NewspaperArticleController's constructor (auth()->id() === 1).
+| Admin routes live under /admin/articles so they don't collide with the
+| public /articles/{slug} wildcard.
+*/
+
+// Public — no auth
+Route::get('/articles', [NewspaperArticleController::class, 'index'])->name('articles.index');
+
+// Admin authoring (registered before the public wildcard)
+Route::middleware('auth')->group(function () {
+    Route::get('/admin/articles/create',            [NewspaperArticleController::class, 'create'])->name('articles.create');
+    Route::post('/admin/articles',                  [NewspaperArticleController::class, 'store'])->name('articles.store');
+    Route::get('/admin/articles/{newspaperArticle}/edit', [NewspaperArticleController::class, 'edit'])->name('articles.edit');
+    Route::put('/admin/articles/{newspaperArticle}', [NewspaperArticleController::class, 'update'])->name('articles.update');
+    Route::delete('/admin/articles/{newspaperArticle}', [NewspaperArticleController::class, 'destroy'])->name('articles.destroy');
+});
+
+// Public — read one article (wildcard last so it doesn't shadow the routes above)
+Route::get('/articles/{newspaperArticle}', [NewspaperArticleController::class, 'show'])->name('articles.show');
+
 
 require __DIR__.'/auth.php';
 
