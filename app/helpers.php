@@ -73,7 +73,7 @@ if (! function_exists('getStoryFromAnthropic')) {
             'news'     => ' The text should resemble a news story. When creating your response, go out and think of actual current news from the last year or so.  Because the Chinese portion of the text is meant to be geared towards learners, you MUST use english when referencing proper nouns like nations, and names of people, the names of companies and organizations, and even event names like "World Cup". Keep the news varied and focus on big news events.  This can include news about for example prominent figures in music, culture, politics, busines, technology and other prominent figures and events in various fields.',
             'article'  => ' The text should resemble an informational/encyclopedia-style article rather than a narrative.',
             'story'    => ' The text should be a short narrative story.',
-            'dialogue' => ' The text should be a short, natural dialogue between two people.',
+            'dialogue' => ' The text should be a short, natural dialogue between two people. No need to narration like: "He said, XYZ" or "XYZ, she responded."  Just have the words that are spoken between the interlocutors, separated by linebreaks. ' ,
         ];
 
         if ($variety && isset($styleMap[$variety])) {
