@@ -63,6 +63,10 @@ Route::post('/', function () {
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
     $chinese = trim($chinese);
+
+    // Remove markdown bold (** **) from the English text
+    $english = str_replace('**', '', $english);
+    
     $definitions = getDefinitions($chinese);
 
     return redirect('/')
@@ -187,6 +191,9 @@ Route::post('/generate', function () {
 
     $chinese = trim($chinese);
 
+    // Remove markdown bold (** **) from the English text
+    $english = str_replace('**', '', $english);
+
     $definitions = getDefinitions($chinese);
 
     return view('story', [
@@ -215,6 +222,9 @@ Route::get('/generate', function () {
 
     $chinese = trim($chinese);
 
+    // Remove markdown bold (** **) from the English text
+    $english = str_replace('**', '', $english);
+
     $definitions = getDefinitions($chinese);
 
 
@@ -239,6 +249,9 @@ Route::get('/texts/{text}', function (GeneratedText $text) {
     [$chinese, $english] = array_pad(explode('<hr>', $text->generated_text ?? ''), 2, '');
 
     $chinese = trim($chinese);
+
+    // Remove markdown bold (** **) from the English text
+    $english = str_replace('**', '', $english);
 
     return view('story', [
         'story' => $text->generated_text,
