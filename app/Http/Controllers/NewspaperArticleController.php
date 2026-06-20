@@ -112,11 +112,14 @@ class NewspaperArticleController extends Controller
     }
 
     /**
-     * Shared validation. The glossary editor submits parallel arrays
-     * (gloss_word[], gloss_pinyin[], gloss_english[]); each row is mapped 1:1
-     * into the definitions token format the reading component consumes:
+     * Shared validation. The definitions textarea has one token per line in
+     * the format:  word | pinyin | definition
+     * Pinyin and definition are optional — punctuation and English words can
+     * be just the bare word. Each line is parsed into the token format the
+     * reading component consumes:
      *   [{word, entries:[{pinyin, pinyin_numeric, english}]}, ...]
-     * No matching against the body, and CEDICT is never consulted.
+     * Lines with no pinyin/definition get an empty entries array. No matching
+     * against the body, and CEDICT is never consulted.
      */
     protected function validated(Request $request): array
     {
@@ -126,37 +129,11 @@ class NewspaperArticleController extends Controller
             'summary'          => ['nullable', 'string'],
             'body'             => ['required', 'string'],
             'english'          => ['nullable', 'string'],
+            'definitions_text' => ['nullable', 'string'],
             'hsk_level'        => ['nullable', 'integer', 'between:1,9'],
             'publication_date' => ['nullable', 'date'],
             'is_published'     => ['nullable', 'boolean'],
-            'gloss_word'       => ['nullable', 'array'],
-            'gloss_word.*'     => ['nullable', 'string', 'max:64'],
-            'gloss_pinyin'     => ['nullable', 'array'],
-            'gloss_pinyin.*'   => ['nullable', 'string', 'max:128'],
-            'gloss_english'    => ['nullable', 'array'],
-            'gloss_english.*'  => ['nullable', 'string', 'max:512'],
         ]);
-
-        $words   = $request->input('gloss_word', []);
-        $pinyins = $request->input('gloss_pinyin', []);
-        $engs    = $request->input('gloss_english', []);
-
-        // Each non-blank row -> one token in the component's "create format".
-        $definitions = [];
-        foreach ($words as $i => $word) {
-            $word = trim((string) $word);
-            if ($word === '') {
-                continue; // skip empty rows
-            }
-            $definitions[] = [
-                'word'    => $word,
-                'entries' => [[
-                    'pinyin'         => trim((string) ($pinyins[$i] ?? '')),
-                    'pinyin_numeric' => '',
-                    'english'        => trim((string) ($engs[$i] ?? '')),
-                ]],
-            ];
-        }
 
         return [
             'title'            => $data['title'],
@@ -167,7 +144,48 @@ class NewspaperArticleController extends Controller
             'hsk_level'        => $data['hsk_level'] ?? null,
             'publication_date' => $data['publication_date'] ?? null,
             'is_published'     => $request->boolean('is_published'),
-            'definitions'      => $definitions ?: null,
+            'definitions'      => $this->parseDefinitions($data['definitions_text'] ?? null),
         ];
+    }
+
+    /**
+     * Parse the pipe-delimited definitions textarea into the token array.
+     * One token per line:  word | pinyin | definition
+     * Whitespace around each field is trimmed. A line with only a word (no
+     * pinyin/definition) becomes a token with an empty entries array.
+     */
+    protected function parseDefinitions(?string $text): ?array
+    {
+        if ($text === null || trim($text) === '') {
+            return null;
+        }
+
+        $tokens = [];
+        foreach (preg_split('/\r\n|\r|\n/', $text) as $line) {
+            if (trim($line) === '') {
+                continue; // skip blank lines
+            }
+
+            // Split into at most 3 fields so a definition may itself contain "|".
+            $parts   = explode('|', $line, 3);
+            $word    = trim($parts[0]);
+            if ($word === '') {
+                continue;
+            }
+            $pinyin  = isset($parts[1]) ? trim($parts[1]) : '';
+            $english = isset($parts[2]) ? trim($parts[2]) : '';
+
+            $entries = ($pinyin === '' && $english === '')
+                ? []
+                : [[
+                    'pinyin'         => $pinyin,
+                    'pinyin_numeric' => '',
+                    'english'        => $english,
+                ]];
+
+            $tokens[] = ['word' => $word, 'entries' => $entries];
+        }
+
+        return $tokens ?: null;
     }
 }

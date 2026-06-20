@@ -81,55 +81,36 @@
         </div>
     </div>
 
-    {{-- Glossary editor (Alpine).
-         Seeds from old() on validation error, otherwise from the saved
-         definitions token array (word + first entry's pinyin/english). --}}
+    {{-- Definitions editor: one token per line, formatted as
+             word | pinyin | definition
+         Pinyin/definition are optional (punctuation, English words can be the
+         bare word). Each line becomes a token; lines with no pinyin/definition
+         store an empty entries array. Seeds from old() on validation error,
+         otherwise rebuilt from the saved token array. --}}
     @php
-        $glossRows = [];
-        if (old('gloss_word')) {
-            foreach (old('gloss_word') as $i => $w) {
-                $glossRows[] = [
-                    'word'    => $w,
-                    'pinyin'  => old('gloss_pinyin')[$i] ?? '',
-                    'english' => old('gloss_english')[$i] ?? '',
-                ];
-            }
-        } elseif (!empty($article->definitions)) {
+        $definitionsText = old('definitions_text');
+        if ($definitionsText === null && !empty($article->definitions)) {
+            $lines = [];
             foreach ($article->definitions as $token) {
+                $word    = $token['word'] ?? '';
                 $entries = $token['entries'] ?? [];
-                $glossRows[] = [
-                    'word'    => $token['word'] ?? '',
-                    'pinyin'  => $entries[0]['pinyin'] ?? '',
-                    'english' => $entries[0]['english'] ?? '',
-                ];
+                if (!empty($entries)) {
+                    $lines[] = $word . ' | ' . ($entries[0]['pinyin'] ?? '') . ' | ' . ($entries[0]['english'] ?? '');
+                } else {
+                    $lines[] = $word;
+                }
             }
+            $definitionsText = implode("\n", $lines);
         }
+        $definitionsText = $definitionsText ?? '';
     @endphp
 
-    <div x-data="{ rows: @js($glossRows) }" class="rounded-xl bg-gray-50 p-5 ring-1 ring-gray-200">
-        <div class="mb-3 flex items-center justify-between">
-            <h3 class="text-[11px] font-semibold uppercase tracking-[0.18em] text-gray-500">生词 · Glossary (manual)</h3>
-            <button type="button" @click="rows.push({ word: '', pinyin: '', english: '' })"
-                    class="rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-500">+ Add word</button>
-        </div>
-
-        <p x-show="rows.length === 0" class="py-4 text-sm text-gray-400">No glossary words yet. Add the key vocabulary you want listed beneath the article.</p>
-
-        <div class="flex flex-col gap-2">
-            <template x-for="(row, i) in rows" :key="i">
-                <div class="grid grid-cols-12 items-start gap-2">
-                    <input type="text" name="gloss_word[]" x-model="row.word" placeholder="词"
-                           class="col-span-3 rounded-md border-gray-300 font-serifsc text-lg shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
-                           style="font-family: 'Noto Serif SC', serif;">
-                    <input type="text" name="gloss_pinyin[]" x-model="row.pinyin" placeholder="cí"
-                           class="col-span-3 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <input type="text" name="gloss_english[]" x-model="row.english" placeholder="word; term"
-                           class="col-span-5 rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                    <button type="button" @click="rows.splice(i, 1)"
-                            class="col-span-1 justify-self-center pt-2 text-gray-300 hover:text-seal" aria-label="Remove row">&times;</button>
-                </div>
-            </template>
-        </div>
+    <div>
+        <x-input-label for="definitions_text" value="Definitions (one per line: 词 | pīnyīn | definition)" />
+        <textarea id="definitions_text" name="definitions_text" rows="14"
+                  class="mt-1 block w-full rounded-md border-gray-300 font-mono text-sm leading-relaxed shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                  placeholder="和 | hé | and&#10;Iran&#10;说 | shuō | to say&#10;，">{{ $definitionsText }}</textarea>
+        <p class="mt-1 text-xs text-gray-400">Use “|” to separate word, pinyin, and definition. Punctuation and English words can be just the word with no pinyin/definition.</p>
     </div>
 
     {{-- Actions --}}
