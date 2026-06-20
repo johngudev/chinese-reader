@@ -83,7 +83,7 @@ class User extends Authenticatable
 
     public function isLifetimePro(): bool
     {
-        $lifetimeProAccounts = [1, 425, 588, 402]; // Assuming the first user is an admin or special user
+        $lifetimeProAccounts = [1, 425, 588, 402, 118]; // Assuming the first user is an admin or special user
 
         if (in_array($this->id, $lifetimeProAccounts)) {
             return true;
