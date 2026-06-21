@@ -37,6 +37,11 @@
                                 {{ __('Premium') }}</span>
                         </x-nav-link>
                     @endif
+                    @if (auth()->id() === 1 || auth()->id() === 1002)
+                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.create')">
+                            {{ __('Write an Article') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -112,6 +117,11 @@
                 <x-responsive-nav-link :href="route('premium')" :active="request()->routeIs('premium')" class="font-bold text-seal">
                     <span class="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition hover:from-amber-500 hover:to-yellow-600 hover:shadow">
                         {{ __('Premium') }}</span>
+                </x-responsive-nav-link>
+            @endif
+            @if (auth()->id() === 1 || auth()->id() === 1002)
+                <x-responsive-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
+                    {{ __('Write an Article') }}
                 </x-responsive-nav-link>
             @endif
         </div>

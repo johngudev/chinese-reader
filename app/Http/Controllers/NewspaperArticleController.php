@@ -15,7 +15,7 @@ class NewspaperArticleController extends Controller
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            abort_unless(auth()->id() === 1, 403);
+            abort_unless(auth()->id() === 1 || auth()->id() === 1002, 403);
             return $next($request);
         })->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
