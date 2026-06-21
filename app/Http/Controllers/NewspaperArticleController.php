@@ -43,7 +43,7 @@ class NewspaperArticleController extends Controller
      */
     public function show(NewspaperArticle $newspaperArticle)
     {
-        abort_unless($newspaperArticle->is_published || auth()->id() === 1, 404);
+        abort_unless($newspaperArticle->is_published || auth()->id() === 1 || auth()->id() === 1002, 404);
 
         return view('articles.show', ['article' => $newspaperArticle]);
     }
