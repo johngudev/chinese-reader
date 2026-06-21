@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-public-layout :title="$article->title">
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">{{ $article->title }}</h2>
     </x-slot>
@@ -68,4 +68,4 @@
             </div>
         </div>
     </div>
-</x-app-layout>
+</x-public-layout>

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-public-layout title="报纸 · Articles">
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">报纸文章 · Newspaper Articles</h2>
     </x-slot>
@@ -59,4 +59,4 @@
             </div>
         @endif
     </div>
-</x-app-layout>
+</x-public-layout>
