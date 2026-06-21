@@ -38,7 +38,7 @@
                         </x-nav-link>
                     @endif
                     @if (auth()->id() === 1 || auth()->id() === 1002)
-                        <x-nav-link :href="route('articles.index')" :active="request()->routeIs('articles.create')">
+                        <x-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
                             {{ __('Write an Article') }}
                         </x-nav-link>
                     @endif
