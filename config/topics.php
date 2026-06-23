@@ -8,8 +8,6 @@ $forms = [
     'a short message to a friend',
     'a miniature folk tale',
     'a humorous everyday vignette',
-    'a suspenseful scene with a small twist',
-    'a science-fiction micro-scene',
     'an overheard conversation',
     'a short product or restaurant review',
     'an encyclopedia-style explanatory paragraph',
@@ -18,8 +16,8 @@ $forms = [
     'a short opinion paragraph',
 ];
 
-$tones = ['warm','humorous','suspenseful','matter-of-fact','melancholy',
-              'optimistic','ironic','curious','hopeful','tense'];
+$tones = ['warm','humorous','matter-of-fact',
+              'optimistic','ironic','curious','hopeful'];
 
 $topics = [
     // feelings & human bonds
