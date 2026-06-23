@@ -416,7 +416,7 @@ if (! function_exists('getStoryFromAnthropic')) {
         . 'Simplified Chinese, 80–120 characters, purely in Chinese characters. Follow the creative brief '
         . 'in the user message for THIS text. After the Chinese text, output an <hr> and then an English '
         . 'translation. If you add a title, make it the first sentence of the text (no extra linebreaks or '
-        . 'tags). Write naturally for a learner and avoid generic filler (e.g., an unnamed student simply going to school).';
+        . 'tags). Write naturally for a learner and avoid generic filler (e.g., an unnamed student simply going to school). Here is the list of characters the user knows: [' . $charList . ']';
 
 
         //Diversity
@@ -438,7 +438,7 @@ if (! function_exists('getStoryFromAnthropic')) {
         //do a special request 80% of the time
         if (rand(1, 100) <= 80) {
             if(is_null($variety)) {
-                $char_diversity_note .= "The form of THIS text should follow the structure of {$form}.  The tone of the text should be {$tone}. For THIS text, make the story about {$topic} or feature {$topic} in some way.";
+                $char_diversity_note .= "The form of THIS text should follow the structure of {$form}.  The tone of the text should be {$tone}. For THIS text, perhaps you could amke the story about {$topic} or feature {$topic} in some way (this is just a suggestion, mainly focus on using the characters the user knows).";
             }
 
             if($variety) {
@@ -457,7 +457,7 @@ if (! function_exists('getStoryFromAnthropic')) {
             'max_tokens' => 2000,
             'system'     => $systemMessage,
             'messages'   => [
-                ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters." . $char_diversity_note],
+                ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using ONLY the characters I know." . $char_diversity_note],
             ],
         ]);
 
