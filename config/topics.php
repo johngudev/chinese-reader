@@ -1,5 +1,17 @@
 <?php 
 
+$easy_forms = [
+    'a short narrative story',
+    'a two-person dialogue (just the spoken lines, no "he said")',
+    'a first-person diary entry',
+    'a short personal anecdote',
+    'a short message to a friend',
+    'a miniature folk tale',
+    'an overheard conversation',
+    'a short opinion paragraph',
+    'a tale involving an animal',
+];  
+
 $forms = [
     'a short narrative story',
     'a two-person dialogue (just the spoken lines, no "he said")',

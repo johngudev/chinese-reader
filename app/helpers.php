@@ -426,8 +426,14 @@ if (! function_exists('getStoryFromAnthropic')) {
         } else {
             $topics = config('topics.topics');
         }
+
         $tones = config('topics.tones');
-        $forms = config('topics.forms');
+
+        if(count($characters) < 200) {
+            $forms = config('topics.easy_forms');
+        } else {
+            $forms = config('topics.forms');
+        }
         //
 
         //select random from each
