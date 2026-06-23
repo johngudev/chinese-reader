@@ -411,8 +411,40 @@ if (! function_exists('getStoryFromAnthropic')) {
 
         $charList = implode(' ', $characters);
 
+    $systemMessage = 'You help people practice reading Chinese. Using ONLY the characters the user lists '
+        . '(one or two characters outside the set is OK, keep it minimal), write a coherent text in '
+        . 'Simplified Chinese, 80–120 characters, purely in Chinese characters. Follow the creative brief '
+        . 'in the user message for THIS text. After the Chinese text, output an <hr> and then an English '
+        . 'translation. If you add a title, make it the first sentence of the text (no extra linebreaks or '
+        . 'tags). Write naturally for a learner and avoid generic filler (e.g., an unnamed student simply going to school).';
 
 
+        //Diversity
+        
+        if(count($characters) < 200) {
+            $topics = config('topics.easy_topics');
+        } else {
+            $topics = config('topics.topics');
+        }
+        $tones = config('topics.tones');
+        $forms = config('topics.forms');
+        //
+
+        //select random from each
+        $topic = $topics[array_rand($topics)];
+        $tone = $tones[array_rand($tones)];
+        $form = $forms[array_rand($forms)];
+
+        //do a special request 80% of the time
+        if (rand(1, 100) <= 80) {
+            if(is_null($variety)) {
+                $char_diversity_note .= "The form of THIS text should follow the structure of {$form}.  The tone of the text should be {$tone}. For THIS text, make the story about {$topic} or feature {$topic} in some way.";
+            }
+
+            if($variety) {
+                $char_diversity_note .= "The tone of THIS text should be {$tone}.";
+            }
+        }
 
         //throttle request to max first 1,0000 characters
 
@@ -423,7 +455,7 @@ if (! function_exists('getStoryFromAnthropic')) {
         ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
             'model'      => 'claude-haiku-4-5-20251001',
             'max_tokens' => 2000,
-            'system'     => 'You help people practice reading Chinese. Write a short, simple, coherent text in Simplified Chinese using the characters the user provides. It is OK to use a Chinese character or two outside that set but keep it minimal. The story may be a story, brief dialogue, a nonfiction piece. Standard punctuation is fine.  The Chinese text should be between 80-120 characters. Each story should be purely in Chinese characters.  After the chinese text include an <hr> and follow with an English translation. If you give your text a title, please just have the title be the first sentence of the text (no extra linebreaks, or p tags to set off title)' . $char_diversity_note,
+            'system'     => $systemMessage,
             'messages'   => [
                 ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using only these characters." . $char_diversity_note],
             ],
