@@ -114,5 +114,6 @@ return [
     'forms' => $forms,
     'tones' => $tones,
     'topics' => $topics,
-    'easy_topics' => $easy_topics,  
+    'easy_topics' => $easy_topics,
+    'easy_forms' => $easy_forms,
 ];
