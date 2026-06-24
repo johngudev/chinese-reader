@@ -442,7 +442,7 @@ if (! function_exists('getStoryFromAnthropic')) {
         $form = $forms[array_rand($forms)];
 
         //do a special request 80% of the time
-        if (rand(1, 100) <= 80) {
+        if (rand(1, 100) <= 60) {
             if(is_null($variety)) {
                 $char_diversity_note .= "The form of THIS text should follow the structure of {$form}.  The tone of the text should be {$tone}. For THIS text, perhaps you could amke the story about {$topic} or feature {$topic} in some way (this is just a suggestion, mainly focus on using the characters the user knows).";
             }
