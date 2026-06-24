@@ -411,12 +411,18 @@ if (! function_exists('getStoryFromAnthropic')) {
 
         $charList = implode(' ', $characters);
 
+        if(count($characters) < 200) {
+            $passage_length = "60-90"; 
+        }  else {
+            $passage_length = "80-120";
+        }
+
     $systemMessage = 'You help people practice reading Chinese. Using ONLY the characters the user lists '
         . '(one or two characters outside the set is OK, keep it minimal), write a coherent text in '
-        . 'Simplified Chinese, 80–120 characters, purely in Chinese characters. Follow the creative brief '
+        . 'Simplified Chinese, ' . $passage_length . ' characters, purely in Chinese characters. Follow the creative brief '
         . 'in the user message for THIS text. After the Chinese text, output an <hr> and then an English '
         . 'translation. If you add a title, make it the first sentence of the text (no extra linebreaks or '
-        . 'tags). Write naturally for a learner and avoid generic filler (e.g., an unnamed student simply going to school). Here is the list of characters the user knows: [' . $charList . ']';
+        . 'tags). Here is the list of characters the user knows: [' . $charList . ']';
 
 
         //Diversity
@@ -463,7 +469,7 @@ if (! function_exists('getStoryFromAnthropic')) {
             'max_tokens' => 2000,
             'system'     => $systemMessage,
             'messages'   => [
-                ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using ONLY the characters I know." . $char_diversity_note],
+                ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using ONLY the characters I know. " . $char_diversity_note],
             ],
         ]);
 
