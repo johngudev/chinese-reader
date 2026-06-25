@@ -135,7 +135,7 @@ Route::get('/retention', function () {
     $percents = [];
     $eligibleCounts = [];
 
-    for ($n = 0; $n <= ((int) $users->max('age')-2); $n++) {
+    for ($n = 0; $n <= ((int) $users->max('age')-7); $n++) {
         $eligible = $users->filter(fn ($u) => $u->age >= $n);
         if ($eligible->isEmpty()) break;
 
