@@ -109,6 +109,21 @@ Route::view('/privacy', 'privacy')->name('privacy');
 
 Route::post('/generate', function () {
     $user       = auth()->user();
+
+            // ── Free daily generation cap ──────────────────────────
+                $cap  = freeDailyGenerationCap();
+                $used = generationsUsedToday($user);
+
+                if (! $user->isPremium() && $used >= $cap) {
+                    return view('story', [
+                        'story'    => null,
+                        'locked'   => true,
+                        'resetsAt' => now()->addDay()->startOfDay()->toIso8601String(),
+                    ]);
+                }
+            // -- End daily generation cap logic --------------------
+
+
     $characters = $user->charactersList?->characters_list ?? [];
 
     //if there was a request, instead use characters from characters sent in request
@@ -145,13 +160,21 @@ Route::post('/generate', function () {
 
     $definitions = getDefinitions($chinese);
 
+    // ── Remaining generations for the day ───────────────────
+    $cap  = freeDailyGenerationCap();
+    $remaining = $user->isPremium() ? null : max(0, $cap - ($used + 1));
+
+
     return view('story', [
         'story' => ($story),
         'chinese' => trim($chinese),
         'english' => trim($english),
         'definitions' => $definitions,
         'textId' => $generated->id,
-        'savedWords' => []]);
+        'savedWords' => [],
+        'locked' => false,
+        'remaining' => $remaining
+        ]);
 
 
 })->middleware('auth');

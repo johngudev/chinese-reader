@@ -485,3 +485,22 @@ if (! function_exists('getStoryFromAnthropic')) {
         return ['story' => $story, 'charList' => $charList, 'char_diversity_note' => $char_diversity_note, 'generated' => $generated];
     }
 }
+
+<?php
+if (! function_exists('freeDailyGenerationCap')) {
+    /** Texts a non-premium user may generate per calendar day. */
+    function freeDailyGenerationCap(): int
+    {
+        return 4;
+    }
+}
+
+if (! function_exists('generationsUsedToday')) {
+    /** Texts the given user has generated since local midnight. */
+    function generationsUsedToday($user): int
+    {
+        return $user->generatedTexts()
+            ->where('created_at', '>=', now()->startOfDay())
+            ->count();
+    }
+}
