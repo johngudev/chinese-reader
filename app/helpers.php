@@ -486,7 +486,6 @@ if (! function_exists('getStoryFromAnthropic')) {
     }
 }
 
-<?php
 if (! function_exists('freeDailyGenerationCap')) {
     /** Texts a non-premium user may generate per calendar day. */
     function freeDailyGenerationCap(): int
