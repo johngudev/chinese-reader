@@ -7,7 +7,45 @@
 
     <div class="py-12">
         <div class="mx-auto max-w-3xl px-2 sm:px-6 lg:px-8">
-            @if(!empty($story))
+            {{-- STATE 2: warning banner on the lead-up (1–3 left) --}}
+            @if(($remaining ?? null) !== null && $remaining >= 1 && $remaining <= 3)
+                <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm font-medium text-amber-800">
+                    {{ $remaining }} more {{ $remaining === 1 ? 'generation' : 'generations' }} left today
+                </div>
+            @endif
+
+            {{-- STATE 3: locked — no story, countdown to reset + upgrade --}}
+            @if($locked ?? false)
+                <div class="mt-6 rounded-2xl bg-white px-6 py-10 text-center shadow-sm ring-1 ring-gray-100">
+                    <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-stone-100 font-serifsc text-2xl text-stone-500">锁</span>
+                    <p class="mt-4 text-lg font-semibold text-gray-900">No more generations today · Limit 4 generations per day</p>
+                    <p class="mt-1 text-sm text-gray-500">
+                        Resets in <span id="countdown" class="font-mono tabular-nums text-gray-700">--:--:--</span>
+                    </p>
+                    <a href="{{ route('premium') }}"
+                        class="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500">
+                        升级 · Upgrade for unlimited generations
+                        <span aria-hidden="true">&rarr;</span>
+                    </a>
+                </div>
+
+                <script>
+                    (function () {
+                        const resetsAt = new Date(@json($resetsAt ?? null)).getTime();
+                        const el = document.getElementById('countdown');
+                        const pad = n => String(n).padStart(2, '0');
+                        (function tick() {
+                            const d = resetsAt - Date.now();
+                            if (d <= 0) { el.textContent = '0:00:00'; return; }
+                            const h = Math.floor(d / 3.6e6),
+                                  m = Math.floor(d % 3.6e6 / 6e4),
+                                  s = Math.floor(d % 6e4 / 1e3);
+                            el.textContent = h + ':' + pad(m) + ':' + pad(s);
+                            setTimeout(tick, 1000);
+                        })();
+                    })();
+                </script>
+            @elseif(!empty($story))
 
                 <div class="overflow-hidden rounded-2xl bg-white shadow-sm ring-1 ring-gray-100">
 
