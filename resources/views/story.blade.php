@@ -8,9 +8,13 @@
     <div class="py-12">
         <div class="mx-auto max-w-3xl px-2 sm:px-6 lg:px-8">
             {{-- STATE 2: warning banner on the lead-up (1–3 left) --}}
-            @if(($remaining ?? null) !== null && $remaining >= 1 && $remaining <= 3)
+            @if(($remaining ?? null) !== null && $remaining >= 0 && $remaining <= 2)
                 <div class="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-2 text-center text-sm font-medium text-amber-800">
-                    {{ $remaining }} more {{ $remaining === 1 ? 'generation' : 'generations' }} left today
+                    @if($remaining === 0)
+                        No more generations left today.  <a href="{{ route('premium') }}" class="underline">Sign up for Premium</a> to generate unlimited texts.
+                    @else
+                        {{ $remaining }} more {{ $remaining === 1 ? 'generation' : 'generations' }} left today
+                    @endif
                 </div>
             @endif
 

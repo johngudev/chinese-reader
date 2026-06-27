@@ -19,7 +19,7 @@
                     Read more, every day
                 </h1>
                 <p class="mx-auto mt-3 max-w-xl text-gray-600">
-                    Free accounts get 5 generations per day. Go Premium for unlimited
+                    Free accounts get 4 generations per day. Go Premium for unlimited
                     reading and control over the texts you generate.
                 </p>
             </header>
