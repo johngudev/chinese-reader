@@ -179,6 +179,7 @@ Route::post('/generate', function () {
 
 })->middleware('auth');
 
+/* Turn off get route for generation
 Route::get('/generate', function () {
     $user       = auth()->user();
     $characters = $user->charactersList?->characters_list ?? [];
@@ -208,7 +209,7 @@ Route::get('/generate', function () {
         'textId' => $generated->id,
         'savedWords' => []]);
 })->middleware('auth', 'throttle:100,1440');  // 50 generations per user per 24h; 
-
+*/
 
 Route::get('/history', function () {
     $texts = auth()->user()->generatedTexts()->latest()->take(10)->get();
