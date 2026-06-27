@@ -113,7 +113,7 @@
                     <div class="mb-4 flex items-center justify-between">
                         <div class="flex items-center gap-2">
                             <span class="grid h-6 w-6 place-items-center rounded-md bg-seal font-serifsc text-sm text-white">词</span>
-                            <h2 class="font-serifsc text-lg font-bold text-gray-900">Recent words</h2>
+                            <a href="{{ route('saved-words') }}"><h2 class="font-serifsc text-lg font-bold text-gray-900">Saved Words</h2></a>
                         </div>
                     </div>
 
