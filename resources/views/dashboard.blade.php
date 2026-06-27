@@ -137,6 +137,12 @@
                                 </li>
                             @endforeach
                         </ul>
+
+                        <a href="{{ route('saved-words') }}"
+                            class="group mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-indigo-600 transition hover:text-indigo-500">
+                            See all saved words
+                            <span aria-hidden="true" class="transition-transform duration-200 group-hover:translate-x-1">&rarr;</span>
+                        </a>
                     @endif
                 </section>
             </div>
