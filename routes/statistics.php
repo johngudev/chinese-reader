@@ -73,3 +73,29 @@ Route::get('/analzye', function() {
 
     return $charactersList;
 })->middleware('auth')->name('analyze');
+
+Route::get('/outreach', function () {
+    abort_unless(auth()->id() === 1, 403);
+
+    $rows = DB::select('
+        SELECT u.id, u.name, u.email,
+               COUNT(g.id)                        AS gens,
+               COUNT(DISTINCT DATE(g.created_at)) AS active_days,
+               MAX(g.created_at)                  AS last_gen,
+               u.created_at                       AS signed_up
+        FROM users u
+        INNER JOIN generated_texts g ON g.user_id = u.id
+        GROUP BY u.id, u.name, u.email, u.created_at
+    ');
+
+    $users = collect($rows);
+
+    // Interview targets: came back on 3+ separate days — the sticky tail
+    $power = $users->filter(fn ($u) => $u->gens >= 10)
+        ->sortByDesc(fn ($u) => [$u->active_days, $u->gens])
+        ->values();
+
+    return response()->json([
+        'power_users'   => ['count' => $power->count(),   'users' => $power],
+    ], 200, [], JSON_PRETTY_PRINT);
+})->middleware('auth');
