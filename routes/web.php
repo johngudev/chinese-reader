@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\GeneratedText;
 use App\Models\SavedWord;
+use App\Models\PremiumVisit;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Http\Controllers\WebhookController;
 
@@ -28,6 +29,7 @@ Route::get('/billing', function (Request $request) {
 })->middleware('auth')->name('billing');
 
 Route::get('/premium', function () {
+    PremiumVisit::create(['user_id' => auth()->id()]);
     return view('premium');
 })->middleware('auth')->name('premium');
 
