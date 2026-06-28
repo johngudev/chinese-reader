@@ -29,6 +29,8 @@
                     <span class="text-gray-400">Click a card to reopen the text it came from.</span>
                 </p>
 
+                <div class="relative">
+                <div @class(['pointer-events-none select-none blur-sm' => $locked ?? false])>
                 <div
                     x-data="savedWordsList({ initial: @js($words->map(fn ($w) => [
                         'id'        => $w->id,
@@ -80,9 +82,28 @@
                     </p>
                 </div>
 
+
+
                 {{-- Pagination --}}
                 <div class="mt-8">
                     {{ $words->links() }}
+                </div>
+                </div>
+
+                @if($locked ?? false)
+                    <div class="absolute inset-0 z-20 grid place-items-center rounded-2xl bg-white/50 backdrop-blur-[2px]">
+                        <div class="mx-4 max-w-sm rounded-2xl bg-white px-6 py-8 text-center shadow-lg ring-1 ring-gray-100">
+                            <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-stone-100 font-serifsc text-2xl text-stone-500">锁</span>
+                            <p class="mt-4 text-lg font-semibold text-gray-900">See all your saved words</p>
+                            <p class="mt-1 text-sm text-gray-500">Sign up for premium to see all your saved words.</p>
+                            <a href="{{ route('premium') }}"
+                               class="mt-5 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500">
+                                升级 · Upgrade to Premium to see all your saved words
+                                <span aria-hidden="true">&rarr;</span>
+                            </a>
+                        </div>
+                    </div>
+                @endif
                 </div>
 
             @endif

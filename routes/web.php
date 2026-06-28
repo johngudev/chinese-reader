@@ -394,5 +394,8 @@ Route::get('/dash', function () {
 Route::get('/saved-words', function () {
     $words = auth()->user()->savedWords()->latest()->paginate(10, ['id', 'generated_text_id', 'word', 'pinyin', 'english']);
 
-    return view('saved-words', ['words' => $words]);
+    // If the user is not premium, lock the list after page 1
+    $locked = ! auth()->user()->isPremium() && $words->currentPage() >= 2;
+
+    return view('saved-words', ['words' => $words, 'locked' => $locked]);
 })->middleware('auth')->name('saved-words');
