@@ -397,5 +397,10 @@ Route::get('/saved-words', function () {
     // If the user is not premium, lock the list after page 1
     $locked = ! auth()->user()->isPremium() && $words->currentPage() >= 2;
 
+    // Locked pages only show a 5-word teaser behind the blur
+    if ($locked) {
+        $words->setCollection($words->getCollection()->take(5));
+    }
+
     return view('saved-words', ['words' => $words, 'locked' => $locked]);
 })->middleware('auth')->name('saved-words');
