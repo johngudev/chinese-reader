@@ -98,7 +98,7 @@
                             <p class="mt-1 text-sm text-gray-500">Sign up for premium to see all your saved words.</p>
                             <a href="{{ route('premium') }}"
                                class="mt-5 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500">
-                                升级 · Upgrade to Premium to see all your saved words
+                                升级 · Upgrade to Premium
                                 <span aria-hidden="true">&rarr;</span>
                             </a>
                         </div>
