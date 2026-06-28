@@ -99,3 +99,19 @@ Route::get('/outreach', function () {
         'power_users'   => ['count' => $power->count(),   'users' => $power],
     ], 200, [], JSON_PRETTY_PRINT);
 })->middleware('auth');
+
+Route::get('/signups', function () {
+    abort_unless(auth()->id() === 1, 403);
+
+    $rows = DB::select('
+        SELECT u.email,
+               COUNT(pv.id)       AS visits,
+               MAX(pv.created_at) AS last_visited
+        FROM premium_visits pv
+        INNER JOIN users u ON u.id = pv.user_id
+        GROUP BY u.id, u.email
+        ORDER BY visits DESC
+    ');
+
+    return response()->json($rows, 200, [], JSON_PRETTY_PRINT);
+})->middleware('auth')->name('signups');
