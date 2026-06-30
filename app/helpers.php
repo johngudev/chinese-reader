@@ -468,7 +468,7 @@ if (! function_exists('getStoryFromAnthropic')) {
             'content-type'      => 'application/json',
         ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
             'model'      => config('anthropic.model'),
-            'max_tokens' => 4000,
+            'max_tokens' => 2000,
             'system'     => $systemMessage,
             'messages'   => [
                 ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using ONLY the characters I know. " . $char_diversity_note],
