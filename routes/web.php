@@ -43,7 +43,7 @@ Route::post('/subscribe', function (Request $request) {
 })->middleware('auth')->name('subscribe');
 
 Route::get('/', function () {
-    return view('welcome', ['story' => session('story'), 'chinese' => session('chinese'), 'english' => session('english'), 'definitions' => session('definitions')]);
+    return view('welcome', ['story' => session('story'), 'chinese' => session('chinese'), 'english' => session('english'), 'definitions' => session('definitions'), 'apiDuration' => session('apiDuration')]);
 });
 
 Route::post('/', function () {
@@ -54,23 +54,26 @@ Route::post('/', function () {
     $characters = array_slice($characters,0,1100);
 
     // Creates the story using the Anthropic API
-    $story = getStoryFromAnthropic($userId = null, $characters)['story'];
+    $response = getStoryFromAnthropic($userId = null, $characters);
+    $story = $response['story'];
+    $apiDuration = $response['api_duration'] ?? null;
 
-    //post-processing of the story from Anthropic API 
+    //post-processing of the story from Anthropic API
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
     $chinese = trim($chinese);
 
     // Remove markdown bold (** **) from the English text
     $english = str_replace('**', '', $english);
-    
+
     $definitions = getDefinitions($chinese);
 
     return redirect('/')
         ->with('story',       $story)
         ->with('chinese',     trim($chinese))
         ->with('english',     trim($english))
-        ->with('definitions', $definitions);
+        ->with('definitions', $definitions)
+        ->with('apiDuration', $apiDuration);
 })->middleware('throttle:100,1');
 
 Route::get('/dashboard', function () {
@@ -151,6 +154,7 @@ Route::post('/generate', function () {
 
     $story = $response['story'];
     $generated = $response['generated'];
+    $apiDuration = $response['api_duration'] ?? null;
 
     //split story into english and chinese by <hr>
     [$chinese, $english] = array_pad(explode('<hr>', $story ?? ''), 2, '');
@@ -175,7 +179,8 @@ Route::post('/generate', function () {
         'textId' => $generated->id,
         'savedWords' => [],
         'locked' => false,
-        'remaining' => $remaining
+        'remaining' => $remaining,
+        'apiDuration' => $apiDuration,
         ]);
 
 

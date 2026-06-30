@@ -412,16 +412,16 @@ if (! function_exists('getStoryFromAnthropic')) {
         $charList = implode(' ', $characters);
 
         if(count($characters) < 200) {
-            $passage_length = "60-90"; 
+            $passage_length = "60-80"; 
         }  else {
-            $passage_length = "80-120";
+            $passage_length = "80-100";
         }
 
     $systemMessage = 'You help people practice reading Chinese. Using ONLY the characters the user lists '
         . '(one or two characters outside the set is OK, keep it minimal), write a coherent text in '
         . 'Simplified Chinese, ' . $passage_length . ' characters, purely in Chinese characters. Follow the creative brief '
         . 'in the user message for THIS text. After the Chinese text, output an <hr> and then an English '
-        . 'translation. If you add a title, make it the first sentence of the text (no extra linebreaks or '
+        . 'translation. (Note that the separator between the Chinese and English text must be an <hr>)  If you add a title, make it the first sentence of the text (no extra linebreaks or '
         . 'tags). Here is the list of characters the user knows: [' . $charList . ']';
 
 
@@ -460,18 +460,24 @@ if (! function_exists('getStoryFromAnthropic')) {
 
         //throttle request to max first 1,0000 characters
 
+        $apiStart = microtime(true);
+
         $response = Http::withHeaders([
             'x-api-key'         => env('X_API_KEY'),
             'anthropic-version' => '2023-06-01',
             'content-type'      => 'application/json',
         ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
-            'model'      => 'claude-haiku-4-5-20251001',
-            'max_tokens' => 2000,
+            'model'      => config('anthropic.model'),
+            'max_tokens' => 4000,
             'system'     => $systemMessage,
             'messages'   => [
                 ['role' => 'user', 'content' => "Characters I know: {$charList}\n\nWrite me a text using ONLY the characters I know. " . $char_diversity_note],
             ],
         ]);
+
+        $apiDuration = microtime(true) - $apiStart;
+
+        // dd($response->json());
 
         $story = $response->json('content.0.text');
 
@@ -482,7 +488,7 @@ if (! function_exists('getStoryFromAnthropic')) {
             'generated_text' => $response->json('content.0.text'),
         ]);
 
-        return ['story' => $story, 'charList' => $charList, 'char_diversity_note' => $char_diversity_note, 'generated' => $generated];
+        return ['story' => $story, 'charList' => $charList, 'char_diversity_note' => $char_diversity_note, 'generated' => $generated, 'api_duration' => $apiDuration];
     }
 }
 
