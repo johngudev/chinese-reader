@@ -8,14 +8,13 @@ use Illuminate\Http\Request;
 class NewspaperArticleController extends Controller
 {
     /**
-     * Admin-only gate (matches the app's existing convention:
-     * abort_unless(auth()->id() === 1, 403)). Applied to the
-     * create/store/edit/update/destroy actions only.
+     * Admin-only gate (matches the app's existing convention). Applied to
+     * the create/store/edit/update/destroy actions only.
      */
     public function __construct()
     {
         $this->middleware(function ($request, $next) {
-            abort_unless(auth()->id() === 1 || auth()->id() === 1002, 403);
+            abort_unless(auth()->user()?->isAdmin(), 403);
             return $next($request);
         })->only(['create', 'store', 'edit', 'update', 'destroy']);
     }
@@ -43,7 +42,7 @@ class NewspaperArticleController extends Controller
      */
     public function show(NewspaperArticle $newspaperArticle)
     {
-        abort_unless($newspaperArticle->is_published || auth()->id() === 1 || auth()->id() === 1002, 404);
+        abort_unless($newspaperArticle->is_published || auth()->user()?->isAdmin(), 404);
 
         return view('articles.show', ['article' => $newspaperArticle]);
     }

@@ -2,11 +2,11 @@
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NewspaperArticleController;
+use App\Http\Controllers\SavedWordController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Http;
 use App\Models\User;
 use App\Models\GeneratedText;
-use App\Models\SavedWord;
 use App\Models\PremiumVisit;
 use Illuminate\Http\Request;
 use Laravel\Cashier\Http\Controllers\WebhookController;
@@ -245,26 +245,9 @@ Route::get('/texts/{text}', function (GeneratedText $text) {
     ]);
 })->middleware('auth');
 
-Route::post('/saved-words', function (Request $r) {
-    $data = $r->validate([
-        'generated_text_id' => 'nullable|integer|exists:generated_texts,id',
-        'word'              => 'required|string|max:32',
-        'pinyin'            => 'nullable|string|max:255',
-        'english'           => 'nullable|string',
-    ]);
-    // updateOrCreate = idempotent; double-clicks return the same row
-    $word = auth()->user()->savedWords()->updateOrCreate(
-        ['generated_text_id' => $data['generated_text_id'] ?? null, 'word' => $data['word']],
-        ['pinyin' => $data['pinyin'] ?? null, 'english' => $data['english'] ?? null],
-    );
-    return response()->json($word);   // includes id, needed for delete
-})->middleware('auth');
+Route::post('/saved-words', [SavedWordController::class, 'store']);
 
-Route::delete('/saved-words/{savedWord}', function (SavedWord $savedWord) {
-    abort_unless($savedWord->user_id === auth()->id(), 403);   // ownership check
-    $savedWord->delete();
-    return response()->noContent();
-})->middleware('auth');
+Route::delete('/saved-words/{savedWord}', [SavedWordController::class, 'destroy']);
 
 /*
 |--------------------------------------------------------------------------
@@ -396,16 +379,4 @@ Route::get('/dash', function () {
     ) + ['memberSince' => $user->created_at->format('M Y')]);
 })->middleware('auth')->name('dash');
 
-Route::get('/saved-words', function () {
-    $words = auth()->user()->savedWords()->latest()->paginate(10, ['id', 'generated_text_id', 'word', 'pinyin', 'english']);
-
-    // If the user is not premium, lock the list after page 1
-    $locked = ! auth()->user()->isPremium() && $words->currentPage() >= 2;
-
-    // Locked pages only show a 5-word teaser behind the blur
-    if ($locked) {
-        $words->setCollection($words->getCollection()->take(5));
-    }
-
-    return view('saved-words', ['words' => $words, 'locked' => $locked]);
-})->middleware('auth')->name('saved-words');
+Route::get('/saved-words', [SavedWordController::class, 'index'])->name('saved-words');
