@@ -20,6 +20,24 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Access Control & Limits
+    |--------------------------------------------------------------------------
+    |
+    | Application-specific settings extracted from inline code so they live in
+    | one place. `admin_ids` may author newspaper articles; `lifetime_pro_ids`
+    | are granted premium access without billing; `free_daily_generation_cap`
+    | caps how many texts a non-premium user may generate per calendar day.
+    |
+    */
+
+    'admin_ids'                 => [1, 1002],
+
+    'lifetime_pro_ids'          => [1, 425, 588, 402, 118],
+
+    'free_daily_generation_cap' => 4,
+
+    /*
+    |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
     |

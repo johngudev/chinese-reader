@@ -83,19 +83,22 @@ class User extends Authenticatable
 
     public function isLifetimePro(): bool
     {
-        $lifetimeProAccounts = [1, 425, 588, 402, 118]; // Assuming the first user is an admin or special user
-
-        if (in_array($this->id, $lifetimeProAccounts)) {
-            return true;
-        } 
-        else {
-            return false;
-        }
+        return in_array($this->id, config('app.lifetime_pro_ids', []), true);
     }
 
     public function isBilled(): bool
     {
         return $this->subscribed('default');
+    }
+
+    /**
+     * Whether the user may author newspaper articles (admin gate).
+     *
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return in_array($this->id, config('app.admin_ids', []), true);
     }
 
 }
