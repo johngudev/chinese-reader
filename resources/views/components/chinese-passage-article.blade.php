@@ -150,30 +150,37 @@
 document.addEventListener('DOMContentLoaded', () => {
     const passage = document.getElementById('generated-chinese-passage');
 
-    // 1) Render the passage as word spans from `definitions`
+    // 1) Render the passage as word spans from `definitions`.
+    //    Each word sits in a nowrap wrapper; trailing punctuation glues to
+    //    the wrapper (so it can't orphan at a line start) but stays OUTSIDE
+    //    the clickable .word span. English/Latin text stands alone as plain
+    //    non-clickable text.
     passage.innerHTML = '';
-    let lastSpan = null;
+    let lastUnit = null;
     definitions.forEach((token, i) => {
         if (token.entries && token.entries.length) {
+            const unit = document.createElement('span');
+            unit.style.cssText = 'display:inline-block;white-space:nowrap';
             const span = document.createElement('span');
             span.className = 'word';
             span.dataset.i = i;
             span.dataset.pinyin = token.entries[0].pinyin;
             span.textContent = token.word;
-            passage.appendChild(span);
-            lastSpan = span;
+            unit.appendChild(span);
+            passage.appendChild(unit);
+            lastUnit = unit;
         } else {
-            // punctuation / whitespace / unmatched — may contain newlines.
-            // keep the \n delimiters as their own array elements:
+            // may contain newlines; keep the \n delimiters as their own parts:
             token.word.split(/(\r\n|\r|\n)/).forEach(part => {
                 if (part === '') return;
                 if (/[\r\n]/.test(part)) {
                     passage.appendChild(document.createElement('br')); // real line break
-                    lastSpan = null;                                   // break the glue chain
-                } else if (lastSpan) {
-                    lastSpan.textContent += part;                      // glue punctuation
+                    lastUnit = null;                                   // break the glue chain
+                } else if (/[A-Za-z0-9]/.test(part) || !lastUnit) {
+                    passage.appendChild(document.createTextNode(part)); // stands alone
+                    lastUnit = null;
                 } else {
-                    passage.appendChild(document.createTextNode(part));
+                    lastUnit.appendChild(document.createTextNode(part)); // glue punctuation
                 }
             });
         }
