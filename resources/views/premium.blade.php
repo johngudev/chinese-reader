@@ -26,7 +26,7 @@
                     Read more, every day
                 </h1>
                 <p class="mx-auto mt-3 max-w-xl text-gray-600">
-                    Get unlimited text generations, full access to your saved-words list, and more.
+                    Get a bigger variety of texts, full access to your saved-words list, and more.
                 </p>
             </header>
 
@@ -49,7 +49,7 @@
                     <span class="text-lg font-medium text-gray-400">/ month</span>
                 </p>
                 <p class="mt-1 text-xs font-medium text-seal">
-                    Summer flash sale — locked in for as long as you stay subscribed.
+                    Summer sale rates — locked in for as long as you stay subscribed.
                 </p>
 
                 <ul class="mt-6 flex flex-col gap-3">

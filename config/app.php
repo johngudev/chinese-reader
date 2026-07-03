@@ -34,7 +34,7 @@ return [
 
     'lifetime_pro_ids'          => [1, 425, 588, 402, 118],
 
-    'free_daily_generation_cap' => 4,
+    'free_daily_generation_cap' => 5,
 
     /*
     |--------------------------------------------------------------------------
