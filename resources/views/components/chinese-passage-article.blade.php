@@ -104,38 +104,6 @@
         cursor: pointer;
     }
 
-    /* hover hint on highlighted words — why is this word marked? */
-    #generated-chinese-passage .word.highlight-new-character::after {
-        content: 'Highlighted words come from outside of your characters list.';
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%);
-        width: max-content;
-        max-width: 230px;
-        white-space: normal;
-        background: #1f2430;                     /* same as #word-tooltip */
-        color: #e8c46a;                          /* honey accent, matches the highlight hue */
-        font-family: 'Inter', -apple-system, sans-serif;
-        font-size: 12px;
-        font-weight: 500;
-        line-height: 1.4;
-        text-align: left;
-        padding: 6px 10px;
-        border-radius: 8px;
-        box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.15s ease;
-        pointer-events: none;
-        z-index: 50;                             /* below #word-tooltip (60) */
-    }
-    #generated-chinese-passage .word.highlight-new-character:hover::after {
-        opacity: 1;
-        visibility: visible;
-        transition-delay: 0.35s;                 /* appear after a beat; hide instantly on mouseout */
-    }
-
     /* tooltip */
     #word-tooltip {
         position: absolute;
