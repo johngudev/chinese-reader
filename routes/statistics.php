@@ -30,8 +30,9 @@ Route::get('/retention', function () {
         FROM users u
         INNER JOIN generated_texts g ON g.user_id = u.id
         WHERE u.created_at > ?
+          AND u.created_at < DATE_SUB(NOW(), INTERVAL ? WEEK)
         GROUP BY u.id, u.created_at
-    ', ['2026-06-05']);
+    ', ['2026-06-05', 3]);
 
     $users = collect($rows)->map(fn ($r) => (object) [
         'age'      => (int) $r->account_age,
