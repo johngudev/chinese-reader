@@ -165,8 +165,9 @@ if (! function_exists('getStoryFromAnthropic')) {
             $passage_length = "80-100";
         }
 
-    $systemMessage = 'You help people practice reading Chinese. Using ONLY the characters the user lists '
-        . ' write a coherent text in '
+    $systemMessage = 'You help people practice reading Chinese. Using ONLY the characters the user lists. '
+        . ' Adherence level to using ONLY characters in the user list = MAXIMUM.  YOU ARE FORBIDDEN FROM USING ANY CHARACTERS NOT IN THE USER LIST.  '
+        . ' Write a coherent text in '
         . 'Simplified Chinese, ' . $passage_length . ' characters, purely in Chinese characters. Follow the creative brief '
         . 'in the user message for THIS text. After the Chinese text, output an <hr> and then an English '
         . 'translation. (Note that the separator between the Chinese and English text must be an <hr>)  If you add a title, make it the first sentence of the text (no extra linebreaks or '
