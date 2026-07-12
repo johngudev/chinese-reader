@@ -22,7 +22,7 @@
             @if($locked ?? false)
                 <div class="mt-6 rounded-2xl bg-white px-6 py-10 text-center shadow-sm ring-1 ring-gray-100">
                     <span class="mx-auto grid h-12 w-12 place-items-center rounded-full bg-stone-100 font-serifsc text-2xl text-stone-500">锁</span>
-                    <p class="mt-4 text-lg font-semibold text-gray-900">No more generations today · Limit 4 generations per day</p>
+                    <p class="mt-4 text-lg font-semibold text-gray-900">No more generations today · Limit 5 generations per day</p>
                     <p class="mt-1 text-sm text-gray-500">
                         Resets in <span id="countdown" class="font-mono tabular-nums text-gray-700">--:--:--</span>
                     </p>
