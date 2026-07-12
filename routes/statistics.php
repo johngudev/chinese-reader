@@ -32,7 +32,7 @@ Route::get('/retention', function () {
         WHERE u.created_at > ?
           AND u.created_at < DATE_SUB(NOW(), INTERVAL ? WEEK)
         GROUP BY u.id, u.created_at
-    ', ['2026-06-05', 3]);
+    ', ['2026-06-05', 0]);
 
     $users = collect($rows)->map(fn ($r) => (object) [
         'age'      => (int) $r->account_age,
@@ -44,7 +44,9 @@ Route::get('/retention', function () {
     $eligibleCounts = [];
 
     for ($n = 0; $n <= ((int) $users->max('age')-7); $n++) {
-        $eligible = $users->filter(fn ($u) => $u->age >= $n);
+        // Only count a user toward day n once 4 weeks have passed since their
+        // day n, so their lifespan has settled: start + n + 28 <= today.
+        $eligible = $users->filter(fn ($u) => $u->age >= $n + 28);
         if ($eligible->isEmpty()) break;
 
         $retained = $eligible->filter(fn ($u) => $u->lifespan >= $n)->count();
