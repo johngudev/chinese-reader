@@ -53,6 +53,9 @@ Route::post('/', function () {
         ->with('apiDuration', $apiDuration);
 })->middleware('throttle:100,1');
 
+// Privacy policy
+Route::view('/privacy', 'privacy')->name('privacy');
+
 require __DIR__.'/auth.php';
 require __DIR__.'/subscription.php';
 require __DIR__.'/app.php';
