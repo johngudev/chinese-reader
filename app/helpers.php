@@ -7,12 +7,21 @@ use Illuminate\Support\Facades\Http;
 
 
 if (! function_exists('getDefinitions')) {
-    function getDefinitions(string $chinese, int $maxLen = 8): array
+    function getDefinitions(string $chinese, ?array $charactersList = null, int $maxLen = 8): array
     {
         $chars = preg_split('//u', $chinese, -1, PREG_SPLIT_NO_EMPTY);   // ← every char, punctuation included
         $n     = count($chars);
 
         if ($n === 0) return [];
+
+        //if a list of characters is given, mark words that contain new characters for the user
+        if ($charactersList) {
+            // Known characters as a hash set; null ⇒ no list given, flagging off
+            $known = $charactersList ? array_flip($charactersList) : null;        
+        } else {
+            $known = null;
+        }
+
 
         // 1) every contiguous substring (length 1..maxLen)
         $candidates = [];
@@ -40,6 +49,18 @@ if (! function_exists('getDefinitions')) {
 
             if ($matched) {
                 [$word, $len] = $matched;
+
+                // does this word contain at least one Han char outside the user's list?
+                $hasNewChar = false;
+                if ($known !== null) {
+                    foreach (array_slice($chars, $i, $len) as $c) {
+                        if (preg_match('/\p{Han}/u', $c) && ! isset($known[$c])) {
+                            $hasNewChar = true;
+                            break;
+                        }
+                    }
+                }
+
                 $definitions[] = [
                     'word'    => $word,
                     'entries' => $dict[$word]->map(fn ($e) => [
@@ -47,6 +68,7 @@ if (! function_exists('getDefinitions')) {
                         'pinyin_numeric' => $e->pinyin_numeric,
                         'english'        => $e->english,
                     ])->all(),
+                    'new_character_flag' => $hasNewChar,
                 ];
                 $i += $len;
             } else {

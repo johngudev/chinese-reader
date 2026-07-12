@@ -102,7 +102,11 @@ Route::post('/generate', function () {
     // Remove markdown bold (** **) from the English text
     $english = str_replace('**', '', $english);
 
-    $definitions = getDefinitions($chinese);
+    $definitions = getDefinitions($chinese, $characters);
+
+    // These definitions carry new_character_flag data (built against the
+    // user's characters list). Not consumed by the UI yet.
+    $definitionsFlagged = !empty($characters);
 
     // ── Remaining generations for the day ───────────────────
     $cap  = freeDailyGenerationCap();

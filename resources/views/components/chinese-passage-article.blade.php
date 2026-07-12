@@ -93,6 +93,12 @@
         padding: 0 1px;
         transition: background-color 0.12s ease;
     }
+    /* words containing a character new to the user's list — soft honey wash
+       with a faint underline accent; sits before :hover so the seal-red
+       hover still takes over */
+    #generated-chinese-passage .word.highlight-new-character {
+        background-color: rgba(201, 151, 26, 0.13);
+    }
     #generated-chinese-passage .word:hover {
         background-color: rgba(192, 57, 43, 0.12);
         cursor: pointer;
@@ -163,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
             unit.style.cssText = 'display:inline-block;white-space:nowrap';
             const span = document.createElement('span');
             span.className = 'word';
+            if (token.new_character_flag) span.classList.add('highlight-new-character');
             span.dataset.i = i;
             span.dataset.pinyin = token.entries[0].pinyin;
             span.textContent = token.word;
