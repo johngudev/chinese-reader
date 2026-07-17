@@ -241,6 +241,29 @@ if (! function_exists('getStoryFromAnthropic')) {
     }
 }
 
+if (! function_exists('countryFromTimezone')) {
+    /**
+     * Convert an IANA timezone (e.g. "America/Chicago") to an
+     * ISO 3166-1 alpha-2 country code (e.g. "US"), or null.
+     */
+    function countryFromTimezone(?string $timezone): ?string
+    {
+        if (! $timezone) {
+            return null;
+        }
+
+        try {
+            $location = (new DateTimeZone($timezone))->getLocation();
+        } catch (Exception $e) {
+            return null;
+        }
+
+        $code = $location['country_code'] ?? null;
+
+        return ($code && $code !== '??') ? $code : null;
+    }
+}
+
 if (! function_exists('freeDailyGenerationCap')) {
     /** Texts a non-premium user may generate per calendar day. */
     function freeDailyGenerationCap(): int

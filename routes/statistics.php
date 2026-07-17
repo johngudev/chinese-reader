@@ -81,14 +81,14 @@ Route::get('/outreach', function () {
     abort_unless(auth()->id() === 1, 403);
 
     $rows = DB::select('
-        SELECT u.id, u.name, u.email,
+        SELECT u.id, u.name, u.email, u.country,
                COUNT(g.id)                        AS gens,
                COUNT(DISTINCT DATE(g.created_at)) AS active_days,
                MAX(g.created_at)                  AS last_gen,
                u.created_at                       AS signed_up
         FROM users u
         INNER JOIN generated_texts g ON g.user_id = u.id
-        GROUP BY u.id, u.name, u.email, u.created_at
+        GROUP BY u.id, u.name, u.email, u.country, u.created_at
     ');
 
     $users = collect($rows);
@@ -107,12 +107,12 @@ Route::get('/signups', function () {
     abort_unless(auth()->id() === 1, 403);
 
     $rows = DB::select('
-        SELECT u.email,
+        SELECT u.email, u.country,
                COUNT(pv.id)       AS visits,
                MAX(pv.created_at) AS last_visited
         FROM premium_visits pv
         INNER JOIN users u ON u.id = pv.user_id
-        GROUP BY u.id, u.email
+        GROUP BY u.id, u.email, u.country
         ORDER BY visits DESC
     ');
 

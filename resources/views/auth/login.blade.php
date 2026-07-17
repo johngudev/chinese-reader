@@ -5,6 +5,15 @@
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
+        <!-- Browser timezone (used server-side to backfill country) -->
+        <input type="hidden" name="timezone" id="timezone">
+        <script>
+            try {
+                document.getElementById('timezone').value =
+                    Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+            } catch (e) {}
+        </script>
+
         <!-- Email Address -->
         <div>
             <x-input-label for="email" :value="__('Email')" />

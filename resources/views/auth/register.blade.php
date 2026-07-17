@@ -2,6 +2,15 @@
     <form method="POST" action="{{ route('register') }}">
         @csrf
 
+        <!-- Browser timezone (used server-side to derive country) -->
+        <input type="hidden" name="timezone" id="timezone">
+        <script>
+            try {
+                document.getElementById('timezone').value =
+                    Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+            } catch (e) {}
+        </script>
+
         <!-- Name -->
         <div>
             <x-input-label for="name" :value="__('Name')" />

@@ -29,6 +29,14 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
+        // If a user does not currently have a country code, assign them a country code based on the timezone provided in the input field 'timezone'
+        $user = $request->user();
+        if (is_null($user->country)
+            && ($country = countryFromTimezone($request->input('timezone')))) {
+            $user->country = $country;
+            $user->save();
+        }
+
         return redirect()->intended(RouteServiceProvider::HOME);
     }
 
