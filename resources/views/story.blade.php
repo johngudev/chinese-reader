@@ -77,6 +77,8 @@
 
                                 <x-text-type-fieldset theme="light" />
 
+                                <x-advanced-options theme="light" />
+
                                 <button type="submit"
                                     class="inline-flex w-72 max-w-full items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                     生成新故事 · Generate another text
@@ -122,6 +124,8 @@
 
                             @if (auth()->user()->isPremium())
                                 <x-text-type-fieldset theme="dark" />
+
+                                <x-advanced-options theme="dark" />
                             @endif
 
                             <button type="submit"

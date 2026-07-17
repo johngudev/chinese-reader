@@ -82,7 +82,7 @@ if (! function_exists('getDefinitions')) {
 }
 
 if (! function_exists('getStoryFromAnthropic')) {
-    function getStoryFromAnthropic($userId, $characters, $variety = null) {
+    function getStoryFromAnthropic($userId, $characters, $variety = null, array $focusWords = []) {
 
         $char_diversity_note = "";
 
@@ -173,6 +173,19 @@ if (! function_exists('getStoryFromAnthropic')) {
         . 'translation. (Note that the separator between the Chinese and English text must be an <hr>)  If you add a title, make it the first sentence of the text (no extra linebreaks or '
         . 'tags). Here is the list of characters the user knows: [' . $charList . ']';
 
+        // Focus words: user-chosen words that MUST appear; their characters are
+        // permitted even if outside the known-characters list.
+        if (! empty($focusWords)) {
+            $focusList = implode('、', $focusWords);
+
+            $systemMessage .= ' FOCUS WORDS EXCEPTION: the user has chosen these focus words: ['
+                . $focusList . ']. You MUST use at least one of them in the Chinese text, and their '
+                . 'characters are permitted even if they are not in the character list above.';
+
+            $char_diversity_note .= " IMPORTANT: You MUST use at least one of these focus words"
+                . " in the Chinese text: {$focusList}.";
+        }
+
 
         //Diversity
         
@@ -238,29 +251,6 @@ if (! function_exists('getStoryFromAnthropic')) {
         ]);
 
         return ['story' => $story, 'charList' => $charList, 'char_diversity_note' => $char_diversity_note, 'generated' => $generated, 'api_duration' => $apiDuration];
-    }
-}
-
-if (! function_exists('countryFromTimezone')) {
-    /**
-     * Convert an IANA timezone (e.g. "America/Chicago") to an
-     * ISO 3166-1 alpha-2 country code (e.g. "US"), or null.
-     */
-    function countryFromTimezone(?string $timezone): ?string
-    {
-        if (! $timezone) {
-            return null;
-        }
-
-        try {
-            $location = (new DateTimeZone($timezone))->getLocation();
-        } catch (Exception $e) {
-            return null;
-        }
-
-        $code = $location['country_code'] ?? null;
-
-        return ($code && $code !== '??') ? $code : null;
     }
 }
 

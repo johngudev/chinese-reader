@@ -4,6 +4,7 @@ use App\Http\Controllers\NewspaperArticleController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SavedWordController;
 use App\Models\GeneratedText;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 
@@ -84,8 +85,27 @@ Route::post('/generate', function () {
 
     $variety = $user->isPremium() ? request('variety') : null;
 
+    // ── Focus words (premium, Advanced box) ────────────────
+    $focusWords = [];
+    if ($user->isPremium() && request('focus_words')) {
+        $candidates = collect(preg_split('/[,，、]/u', request('focus_words')))
+            ->map(fn ($w) => preg_replace('/^\s+|\s+$/u', '', $w))  // trim edges only (incl. full-width space)
+            ->filter()                                             // drop empty tokens, e.g. trailing comma
+            ->unique()
+            ->take(5)
+            ->values();
 
-    $response = getStoryFromAnthropic($user->id, $characters, $variety);
+        if ($candidates->isNotEmpty()) {
+            // cedict is the sole arbiter of a real word; non-matches silently dropped
+            $focusWords = DB::table('cedict')
+                ->whereIn('simplified', $candidates->all())
+                ->distinct()
+                ->pluck('simplified')
+                ->all();
+        }
+    }
+
+    $response = getStoryFromAnthropic($user->id, $characters, $variety, $focusWords);
     
 
     $charList = implode(' ', $characters);
