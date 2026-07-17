@@ -9,9 +9,8 @@
         ? 'border-white/30 bg-white/10 text-white'
         : 'border-gray-200 bg-white text-gray-700';
 
-    $inputClass = $theme === 'dark'
-        ? 'border-white/40 bg-white/10 text-white placeholder-white/40 focus:border-white focus:ring-white'
-        : 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500';
+    // Input is always white with black text, regardless of the surrounding theme.
+    $inputClass = 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500';
 
     $helpClass = $theme === 'dark' ? 'text-white/70' : 'text-gray-500';
 @endphp
@@ -31,6 +30,6 @@
         <input type="text" name="focus_words" id="focus_words"
             value="{{ request('focus_words') }}"
             placeholder="学习, 朋友, 天气"
-            class="mt-2 w-full rounded-lg text-sm shadow-sm {{ $inputClass }}">
+            class="mt-2 w-full rounded-lg py-4 text-sm shadow-sm {{ $inputClass }}">
     </div>
 </details>
