@@ -30,6 +30,6 @@
         <input type="text" name="focus_words" id="focus_words"
             value="{{ request('focus_words') }}"
             placeholder="学习, 朋友, 天气"
-            class="mt-2 w-full rounded-lg py-4 text-sm shadow-sm {{ $inputClass }}">
+            class="mt-2 h-20 w-full rounded-lg text-sm shadow-sm {{ $inputClass }}">
     </div>
 </details>
