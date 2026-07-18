@@ -80,7 +80,11 @@ Route::post('/generate', function () {
     }
 
     if (empty($characters)) {
-        return redirect('generate');
+        // No characters list yet — send them to set one up. (Was
+        // redirect('generate'), which pointed at the URL /generate — a
+        // POST-only path — and threw MethodNotAllowedHttpException.)
+        return redirect('/characters')
+            ->with('status', 'Add the characters you know first — then we can write you a text.');
     }
 
     $variety = $user->isPremium() ? request('variety') : null;
@@ -139,6 +143,7 @@ Route::post('/generate', function () {
         'english' => trim($english),
         'definitions' => $definitions,
         'textId' => $generated->id,
+        'isOwner' => true,
         'savedWords' => [],
         'locked' => false,
         'remaining' => $remaining,
@@ -186,8 +191,11 @@ Route::get('/history', function () {
 })->middleware('auth')->name('history');
 
 
+// Public: any text is readable by anyone (guests included). Only the
+// owner gets the saved-words feature — everyone else is read-only.
 Route::get('/texts/{text}', function (GeneratedText $text) {
-    abort_unless($text->user_id === auth()->id(), 403);
+    $isOwner = auth()->check() && auth()->id() === $text->user_id;
+
     [$chinese, $english] = array_pad(explode('<hr>', $text->generated_text ?? ''), 2, '');
 
     $chinese = trim($chinese);
@@ -196,16 +204,19 @@ Route::get('/texts/{text}', function (GeneratedText $text) {
     $english = str_replace('**', '', $english);
 
     $definitions = getDefinitions($chinese);
-    
+
     return view('story', [
         'story' => $text->generated_text,
         'chinese' => trim(strip_tags($chinese)),
         'english' => trim($english),
-        'definitions' => getDefinitions($chinese) ?? /* re-annotate fallback */ [],
+        'definitions' => $definitions ?? [],
         'textId' => $text->id,
-        'savedWords' => auth()->user()->savedWords()->where('generated_text_id', $text->id)->get(['id', 'word', 'pinyin', 'english']), 
+        'isOwner' => $isOwner,
+        'savedWords' => $isOwner
+            ? auth()->user()->savedWords()->where('generated_text_id', $text->id)->get(['id', 'word', 'pinyin', 'english'])
+            : [],
     ]);
-})->middleware('auth');
+})->middleware('throttle:60,1');
 
 Route::post('/saved-words', [SavedWordController::class, 'store']);
 

@@ -1,4 +1,4 @@
-<x-app-layout>
+<x-public-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
             你的故事 · Your Story
@@ -61,8 +61,9 @@
                         @endphp
                     @endif
                     
-                    <x-chinese-passage-article :story="$story" :definitions="$definitions" :chinese="$chinese" :english="$english" :textId="$textId" :savedWords="$savedWords"/>
+                    <x-chinese-passage-article :story="$story" :definitions="$definitions" :chinese="$chinese" :english="$english" :textId="$textId" :savedWords="$savedWords" :is-owner="$isOwner ?? false"/>
 
+                    @auth
                     @if (auth()->user()->isPremium())
                         {{-- Footer / actions for Premium --}}
                         <div class="no-print flex flex-col items-center gap-4 border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12">
@@ -101,6 +102,18 @@
                         </form>
                     </div>
                     @endif
+                    @else
+                    {{-- Footer / CTA for guests --}}
+                    <div class="no-print flex flex-col items-center gap-3 border-t border-gray-100 bg-gray-50 px-8 py-6 text-center sm:px-12">
+                        <p class="text-sm text-gray-600">
+                            想读用你认识的字写的故事？ · Want texts written with only the characters <span class="font-semibold">you</span> know?
+                        </p>
+                        <a href="{{ route('register') }}"
+                            class="inline-flex items-center rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500">
+                            免费注册 · Sign up free
+                        </a>
+                    </div>
+                    @endauth
 
                 </div>
             @else
@@ -122,7 +135,7 @@
                             class="mt-2 flex flex-col items-center gap-3">
                             @csrf
 
-                            @if (auth()->user()->isPremium())
+                            @if (auth()->check() && auth()->user()->isPremium())
                                 <x-text-type-fieldset theme="dark" />
 
                                 <x-advanced-options theme="dark" />
@@ -139,7 +152,7 @@
             @endif
 
             @if(!empty($story))
-            @auth
+            @if(auth()->check() && ($isOwner ?? false))
             <script>
             document.addEventListener('alpine:init', () => {
                 Alpine.data('savedWords', ({ initial }) => ({
@@ -190,11 +203,16 @@
                 </template>
             </ul>
         </div>
-        @endauth
         @endif
+        @endif
+
+            {{-- Share this text — under everything, the last element on the page --}}
+            @if(!empty($story) && !empty($textId))
+                <x-share-text :chinese="$chinese" :text-id="$textId" />
+            @endif
 
         </div>
         
 
     </div>
-</x-app-layout>
+</x-public-layout>

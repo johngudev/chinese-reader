@@ -1,4 +1,4 @@
-@props(['story','definitions','chinese','english','savedWords' => [], 'textId' => null])
+@props(['story','definitions','chinese','english','savedWords' => [], 'textId' => null, 'isOwner' => false])
 
 @if(!empty($definitions))
 <script>
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     const SAVE_TEXT_ID = {{ $textId ?? 'null' }};
-    const CAN_SAVE     = {{ (auth()->check() && $textId) ? 'true' : 'false' }};
+    const CAN_SAVE     = {{ (auth()->check() && $isOwner && $textId) ? 'true' : 'false' }};
 
 
     // 3) Click a word → show; click elsewhere → hide
