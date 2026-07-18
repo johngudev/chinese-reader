@@ -27,9 +27,8 @@
         <p class="mt-1 text-xs {{ $helpClass }}">
             Enter up to 5 words (comma separated) and some of those words will show up in your text.
         </p>
-        <input type="text" name="focus_words" id="focus_words"
-            value="{{ request('focus_words') }}"
+        <textarea name="focus_words" id="focus_words" rows="2"
             placeholder="学习, 朋友, 天气"
-            class="mt-2 h-20 w-full rounded-lg text-sm shadow-sm {{ $inputClass }}">
+            class="mt-2 w-full resize-y rounded-lg py-4 text-sm shadow-sm {{ $inputClass }}">{{ request('focus_words') }}</textarea>
     </div>
 </details>

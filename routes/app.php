@@ -88,7 +88,7 @@ Route::post('/generate', function () {
     // ── Focus words (premium, Advanced box) ────────────────
     $focusWords = [];
     if ($user->isPremium() && request('focus_words')) {
-        $candidates = collect(preg_split('/[,，、]/u', request('focus_words')))
+        $candidates = collect(preg_split('/[,，、\r\n]+/u', request('focus_words')))
             ->map(fn ($w) => preg_replace('/^\s+|\s+$/u', '', $w))  // trim edges only (incl. full-width space)
             ->filter()                                             // drop empty tokens, e.g. trailing comma
             ->unique()
