@@ -210,7 +210,9 @@ if (! function_exists('getStoryFromAnthropic')) {
         $form = $forms[array_rand($forms)];
 
         //do a special request 80% of the time
-        if (rand(1, 100) <= 60) {
+            $diversityChance = min(75, max(25, count($characters) / 15));
+
+        if (rand(1, 100) <= $diversityChance) {
             if(is_null($variety)) {
                 $char_diversity_note .= "The form of THIS text should follow the structure of {$form}.  The tone of the text should be {$tone}. For THIS text, perhaps you could amke the story about {$topic} or feature {$topic} in some way (this is just a suggestion, mainly focus on using the characters the user knows).";
             }
@@ -219,6 +221,9 @@ if (! function_exists('getStoryFromAnthropic')) {
                 $char_diversity_note .= "The tone of THIS text should be {$tone}.";
             }
         }
+
+        $char_diversity_note .= " FINAL RULE, overriding every suggestion above: if the suggested topic, form, or style cannot be expressed using ONLY the listed characters, ignore that suggestion and write about something the characters CAN express. The character list always wins.";
+
 
         //throttle request to max first 1,0000 characters
 
