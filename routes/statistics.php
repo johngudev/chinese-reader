@@ -46,7 +46,7 @@ Route::get('/retention', function () {
     for ($n = 0; $n <= 100; $n++) {
         // Only count a user toward day n once 4 weeks have passed since their
         // day n, so their lifespan has settled: start + n + 28 <= today.
-        $eligible = $users->filter(fn ($u) => $u->age >= $n + 18);
+        $eligible = $users->filter(fn ($u) => $u->age >= $n + 14);
         if ($eligible->isEmpty()) break;
 
         $retained = $eligible->filter(fn ($u) => $u->lifespan >= $n)->count();
