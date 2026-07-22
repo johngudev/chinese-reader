@@ -118,3 +118,34 @@ Route::get('/signups', function () {
 
     return response()->json($rows, 200, [], JSON_PRETTY_PRINT);
 })->middleware('auth')->name('signups');
+
+/*
+|--------------------------------------------------------------------------
+| Raw export for post-processing
+|--------------------------------------------------------------------------
+| /raw-daily — per-user generation counts on active days only. Sample,
+| stratify, and slice downstream (e.g. pandas), not here.
+*/
+
+Route::get('/gens', function () {
+    abort_unless(auth()->id() === 1, 403);
+
+    // Per-user counts for active days only, in chronological order.
+    // No zero-fill, no shared calendar axis — each user's list just runs
+    // from their first active day to their last.
+    $rows = DB::select('
+        SELECT user_id,
+               COUNT(*) AS gens
+        FROM generated_texts
+        WHERE user_id IS NOT NULL
+        GROUP BY user_id, DATE(created_at)
+        ORDER BY user_id, DATE(created_at)
+    ');
+
+    $users = [];
+    foreach ($rows as $r) {
+        $users[$r->user_id][] = (int) $r->gens;
+    }
+
+    return response()->json((object) $users, 200, [], JSON_PRETTY_PRINT);
+})->middleware('auth')->name('raw.daily');
