@@ -32,7 +32,8 @@ return [
     ],
 
     'stripe' => [
-        'price_id' => env('STRIPE_PRICE_ID'),
+        'price_id'     => env('STRIPE_PRICE_ID'),
+        'price_annual' => env('STRIPE_PRICE_ANNUAL_ID'),
     ],
 
 ];
