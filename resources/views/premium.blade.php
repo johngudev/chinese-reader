@@ -50,7 +50,7 @@
                         <span class="shrink-0 font-serifsc text-xl leading-none text-seal">✓</span>
                         <span class="text-sm text-gray-700">
                             <strong class="font-semibold text-gray-900">Choose your text style</strong><br>
-                            <span class="text-gray-500">New text generation options: news, stories, articles, dialogues.</span>
+                            <span class="text-gray-500">New text generation options: stories, articles, dialogues.</span>
                         </span>
                     </li>
                     <li class="flex items-start gap-3 rounded-xl bg-white px-4 py-3.5 shadow-sm ring-1 ring-line transition hover:shadow-md">
