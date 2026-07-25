@@ -299,3 +299,13 @@ if (! function_exists('generationsUsedToday')) {
             ->count();
     }
 }
+
+if (! function_exists('hanCharacters')) {
+    /** Unique Han characters in a string, in first-appearance order. */
+    function hanCharacters(string $text): array
+    {
+        preg_match_all('/\p{Han}/u', $text, $m);
+
+        return array_values(array_unique($m[0]));
+    }
+}

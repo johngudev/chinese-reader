@@ -220,6 +220,9 @@ Route::get('/texts/{text}', function (GeneratedText $text) {
 
 Route::post('/saved-words', [SavedWordController::class, 'store']);
 
+// Union a saved word's characters into the user's characters list.
+Route::post('/saved-words/{savedWord}/promote', [SavedWordController::class, 'promote']);
+
 Route::delete('/saved-words/{savedWord}', [SavedWordController::class, 'destroy']);
 
 Route::get('/saved-words', [SavedWordController::class, 'index'])->name('saved-words');

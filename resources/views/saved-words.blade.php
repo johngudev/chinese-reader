@@ -26,45 +26,47 @@
 
                 <p class="mb-5 px-1 text-sm text-gray-500">
                     Words you've tapped while reading.
-                    <span class="text-gray-400">Click a card to reopen the text it came from.</span>
+                    <span class="text-gray-400">Open the text a word came from, or add its characters to your list.</span>
                 </p>
 
                 <div class="relative">
                 <div @class(['pointer-events-none select-none blur-sm' => $locked ?? false])>
-                <div
-                    x-data="savedWordsList({ initial: @js($words->map(fn ($w) => [
-                        'id'        => $w->id,
-                        'word'      => $w->word,
-                        'pinyin'    => $w->pinyin,
-                        'english'   => $w->english,
-                        'source_id' => $w->generated_text_id,
-                    ])) })"
-                >
+                <div x-data="savedWordsList({ initial: @js($payload) })">
                     <ul class="flex flex-col gap-3">
                         <template x-for="w in words" :key="w.id">
-                            <li class="group relative">
+                            <li class="relative rounded-2xl bg-white px-5 py-5 pr-12 shadow-sm ring-1 ring-gray-200 sm:px-7">
 
-                                <a :href="w.source_id ? '/texts/' + w.source_id : null"
-                                :target="w.source_id ? '_blank' : null"
-                                rel="noopener"
-                                class="flex items-start gap-4 rounded-2xl bg-white px-5 py-5 pr-12 shadow-sm ring-1 ring-gray-200 transition sm:gap-6 sm:px-7"
-                                :class="w.source_id ? 'cursor-pointer hover:-translate-y-0.5 hover:shadow hover:ring-indigo-300' : 'cursor-default'">
-
+                                <div class="flex items-start gap-4 sm:gap-6">
                                     {{-- big character --}}
-                                    <span class="font-serifsc text-5xl leading-none text-gray-900 shrink-0 sm:text-6xl" x-text="w.word"></span>
+                                    <span class="shrink-0 font-serifsc text-5xl leading-none text-gray-900 sm:text-6xl" x-text="w.word"></span>
 
                                     {{-- pinyin (red) + english --}}
                                     <div class="min-w-0 flex-1 pt-1">
                                         <span class="block text-base font-medium text-seal sm:text-lg" x-text="w.pinyin"></span>
                                         <span class="mt-1 block text-sm leading-snug text-gray-600 sm:text-base" x-text="w.english"></span>
                                     </div>
+                                </div>
 
-                                    {{-- open-source hint, only when linkable --}}
-                                    <span x-show="w.source_id"
-                                        class="pointer-events-none absolute bottom-3 right-4 text-[11px] text-gray-300 opacity-0 transition group-hover:opacity-100">
-                                        打开课文 · open text ↗
-                                    </span>
-                                </a>
+                                {{-- actions --}}
+                                <div class="mt-4 flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-gray-100 pt-3">
+
+                                    <a x-show="w.source_id"
+                                       :href="'/texts/' + w.source_id"
+                                       target="_blank" rel="noopener"
+                                       class="text-sm font-medium text-gray-500 transition hover:text-seal">
+                                        Open text <span aria-hidden="true">&nearr;</span>
+                                    </a>
+
+                                    <button type="button"
+                                        x-show="w.chars.length > 0"
+                                        @click="promote(w)"
+                                        :disabled="w.promoted"
+                                        class="text-sm font-medium transition"
+                                        :class="w.promoted ? 'cursor-default text-gray-400' : 'text-indigo-600 hover:text-indigo-500'">
+                                        <span x-show="! w.promoted">+ Add to my characters</span>
+                                        <span x-show="w.promoted" x-cloak>&check; In your characters</span>
+                                    </button>
+                                </div>
 
                                 {{-- × delete --}}
                                 <button @click="remove(w)"
@@ -115,7 +117,29 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('savedWordsList', ({ initial }) => ({
-                words: initial ?? [],
+                // promoted is derived on init: every Han character already known.
+                words: (initial ?? []).map(w => ({
+                    ...w,
+                    promoted: w.chars.length > 0 && w.new_chars.length === 0,
+                })),
+
+                promote(word) {
+                    if (word.promoted) return;
+
+                    word.promoted = true;                          // greys immediately
+                    window.dispatchEvent(new CustomEvent('toast', {
+                        detail: { message: 'Characters added' },
+                    }));
+
+                    // Fire and forget: the response is deliberately not
+                    // inspected, so a failed write fails silently. The empty
+                    // catch only stops an unhandled rejection in the console.
+                    fetch('/saved-words/' + word.id + '/promote', {
+                        method: 'POST',
+                        headers: { 'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]').content },
+                    }).catch(() => {});
+                },
+
                 async remove(word) {
                     const i = this.words.findIndex(w => w.id === word.id);
                     if (i === -1) return;

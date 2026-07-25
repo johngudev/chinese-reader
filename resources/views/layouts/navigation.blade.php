@@ -38,9 +38,9 @@
                         </x-nav-link -->
                     @endif
                     @if (auth()->id() === 1 || auth()->id() === 1002)
-                        <x-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
+                        <!-- <x-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
                             {{ __('Write an Article') }}
-                        </x-nav-link>
+                        </x-nav-link> -->
                     @endif
                 </div>
             </div>
@@ -120,9 +120,9 @@
                 </x-responsive-nav-link> -->
             @endif
             @if (auth()->id() === 1 || auth()->id() === 1002)
-                <x-responsive-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
+                <!-- <x-responsive-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
                     {{ __('Write an Article') }}
-                </x-responsive-nav-link>
+                </x-responsive-nav-link> -->
             @endif
         </div>
 

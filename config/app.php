@@ -26,7 +26,8 @@ return [
     | Application-specific settings extracted from inline code so they live in
     | one place. `admin_ids` may author newspaper articles; `lifetime_pro_ids`
     | are granted premium access without billing; `free_daily_generation_cap`
-    | caps how many texts a non-premium user may generate per calendar day.
+    | caps how many texts a non-premium user may generate per calendar day;
+    | `max_characters_list` caps the size of a user's characters list.
     |
     */
 
@@ -35,6 +36,10 @@ return [
     'lifetime_pro_ids'          => [1, 425, 588, 402, 118, 683],
 
     'free_daily_generation_cap' => 5,
+
+    // Ceiling on a user's characters list. Matches the array_slice cap the
+    // guest generation path in routes/web.php already applies.
+    'max_characters_list'       => 1100,
 
     /*
     |--------------------------------------------------------------------------
