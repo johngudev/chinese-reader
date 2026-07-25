@@ -32,7 +32,7 @@ return [
 
     'admin_ids'                 => [1, 1002],
 
-    'lifetime_pro_ids'          => [1, 425, 588, 402, 118],
+    'lifetime_pro_ids'          => [1, 425, 588, 402, 118, 683],
 
     'free_daily_generation_cap' => 5,
 
