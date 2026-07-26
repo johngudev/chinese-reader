@@ -22,7 +22,7 @@
         Advanced &#9662;
     </summary>
 
-    <div class="mt-2 rounded-xl border-2 px-4 py-3 text-left md:px-12 {{ $boxClass }}">
+    <div class="mt-2 rounded-xl border-2 px-2 py-3 text-left md:px-12 {{ $boxClass }}">
         <x-theme-chips :theme="$theme" />
 
         <div class="my-3 h-px {{ $ruleClass }}"></div>
