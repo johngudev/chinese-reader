@@ -90,7 +90,7 @@
                     <p class="max-w-sm text-sm text-white/80">
                         We'll write you a text using only the characters you know.
                     </p>
-                    <form method="POST" action="{{ url('/generate') }}" onsubmit="document.getElementById('characters_hidden').value = document.getElementById('characters').value">
+                    <form method="POST" action="{{ url('/generate') }}" class="w-full" onsubmit="document.getElementById('characters_hidden').value = document.getElementById('characters').value">
                         @csrf
                         <textarea name="characters" id="characters_hidden" rows="10"
                         class="hidden"
@@ -98,8 +98,7 @@
 
                         @if (auth()->user()->isPremium())
                             <x-text-type-fieldset theme="dark" class="mx-auto mt-2" />
-                            <x-theme-chips theme="dark" class="mx-auto mt-4" />
-                            <x-advanced-options theme="dark" class="mx-auto mt-4" />
+                            <x-advanced-options theme="dark" class="mx-auto mt-2" />
                         @endif
 
                         <button type="submit"

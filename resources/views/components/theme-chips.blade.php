@@ -2,14 +2,16 @@
 
 @php
     // NOTE ON THE WORD "THEME": $theme here is the VISUAL theme
-    // (dark/light), matching <x-text-type-fieldset>. The subject the
-    // learner picks is the radio field named "theme" below. Two different
-    // layers that happen to share a word.
+    // (dark/light). The subject the learner picks is the radio field
+    // named "theme" below. Two different layers that share a word.
+    //
+    // This component renders INSIDE the <x-advanced-options> box, so it
+    // styles itself as a labelled field in that box (like Focus Words)
+    // rather than as a standalone section with its own heading.
 
     $chips = config('topics.theme_chips', []);
 
-    $legendClass = $theme === 'dark' ? 'text-white/80' : 'text-gray-500';
-    $helpClass   = $theme === 'dark' ? 'text-white/60' : 'text-gray-400';
+    $helpClass = $theme === 'dark' ? 'text-white/70' : 'text-gray-500';
 
     $chipBase = 'inline-flex items-center rounded-full border-2 px-2 py-1 text-[12px] font-semibold transition';
 
@@ -20,12 +22,16 @@
         : 'border-gray-200 bg-white text-gray-600 hover:bg-gray-50 peer-checked:border-indigo-600 peer-checked:bg-indigo-600 peer-checked:text-white peer-checked:shadow-lg peer-focus-visible:ring-2 peer-focus-visible:ring-indigo-500';
 @endphp
 
-<fieldset {{ $attributes->merge(['class' => 'w-72 max-w-full']) }}>
-    <legend class="mb-2 block w-full text-center text-[11px] font-semibold uppercase tracking-[0.2em] {{ $legendClass }}">
-        Pick a theme <span class="{{ $helpClass }}">· optional</span>
+<fieldset {{ $attributes->merge(['class' => 'w-full']) }}>
+    <legend class="block text-xs font-semibold uppercase tracking-[0.15em]">
+        Theme &middot; 主题
     </legend>
 
-    <div class="flex flex-wrap justify-center gap-1.5">
+    <p class="mt-1 text-xs {{ $helpClass }}">
+        Pick one subject for this text, or leave it on Any.
+    </p>
+
+    <div class="mt-2 flex flex-wrap gap-1.5">
         {{-- Any = no theme; the value the generator treats as "unset" --}}
         <label class="cursor-pointer">
             <input type="radio" name="theme" value="" class="peer sr-only" checked>

@@ -13,14 +13,20 @@
     $inputClass = 'border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:ring-indigo-500';
 
     $helpClass = $theme === 'dark' ? 'text-white/70' : 'text-gray-500';
+
+    $ruleClass = $theme === 'dark' ? 'bg-white/20' : 'bg-gray-200';
 @endphp
 
-<details {{ $attributes->merge(['class' => 'w-72 max-w-full']) }}>
+<details {{ $attributes->merge(['class' => 'w-full']) }}>
     <summary class="cursor-pointer select-none text-center text-[11px] font-semibold uppercase tracking-[0.2em] {{ $legendClass }}">
         Advanced &#9662;
     </summary>
 
-    <div class="mt-2 rounded-xl border-2 px-4 py-3 text-left {{ $boxClass }}">
+    <div class="mt-2 rounded-xl border-2 px-4 py-3 text-left md:px-12 {{ $boxClass }}">
+        <x-theme-chips :theme="$theme" />
+
+        <div class="my-3 h-px {{ $ruleClass }}"></div>
+
         <label for="focus_words" class="block text-xs font-semibold uppercase tracking-[0.15em]">
             Focus Words &middot; 词
         </label>

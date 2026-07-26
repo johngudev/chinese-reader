@@ -78,8 +78,6 @@
 
                                 <x-text-type-fieldset theme="light" />
 
-                                <x-theme-chips theme="light" />
-
                                 <x-advanced-options theme="light" />
 
                                 <button type="submit"
@@ -134,13 +132,11 @@
 
                         <form method="POST" action="{{ url('/generate') }}"
                             onsubmit="document.getElementById('loading-modal').classList.remove('hidden')"
-                            class="mt-2 flex flex-col items-center gap-3">
+                            class="mt-2 flex w-full flex-col items-center gap-3">
                             @csrf
 
                             @if (auth()->check() && auth()->user()->isPremium())
                                 <x-text-type-fieldset theme="dark" />
-
-                                <x-theme-chips theme="dark" />
 
                                 <x-advanced-options theme="dark" />
                             @endif
