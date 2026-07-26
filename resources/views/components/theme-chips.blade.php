@@ -33,15 +33,15 @@
     </legend>
 
     <p class="mt-1 text-xs {{ $helpClass }}">
-        Pick one subject for this text, or leave it on Any.
+        Pick one subject for this text, or leave it on None.
     </p>
 
     <div class="mt-2 flex flex-wrap gap-1.5">
-        {{-- Any = no theme; the value the generator treats as "unset".
+        {{-- None = no theme; the value the generator treats as "unset".
              Stays live even when locked — it is the free experience. --}}
         <label class="cursor-pointer">
             <input type="radio" name="theme" value="" class="peer sr-only" checked>
-            <span class="{{ $chipBase }} {{ $chipTheme }}">🎲 Any</span>
+            <span class="{{ $chipBase }} {{ $chipTheme }}">None</span>
         </label>
 
         @foreach ($chips as $key => $chip)
