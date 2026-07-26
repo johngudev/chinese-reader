@@ -97,7 +97,7 @@
                         placeholder="">{{ implode(' ', $characters) }}</textarea>
 
                         <x-text-type-fieldset theme="dark" class="mx-auto mt-2" :locked="! auth()->user()->isPremium()" />
-                        <x-advanced-options theme="dark" class="mx-auto mt-2" :locked="! auth()->user()->isPremium()" />
+                        <x-advanced-options theme="dark" class="mx-auto mt-4" :locked="! auth()->user()->isPremium()" />
 
                         <button type="submit"
                             onclick="document.getElementById('loading-modal').classList.remove('hidden')"
