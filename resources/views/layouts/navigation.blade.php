@@ -32,10 +32,10 @@
                             {{ __('Billing') }}
                         </x-nav-link>
                     @elseif (! auth()->user()->isPremium())
-                        x-nav-link :href="route('premium')" :active="request()->routeIs('premium')" class="font-bold text-seal">
+                        <x-nav-link :href="route('premium')" :active="request()->routeIs('premium')" class="font-bold text-seal">
                             <span class="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-amber-400 to-yellow-500 px-3 py-1 text-xs font-bold uppercase tracking-wide text-white shadow-sm transition hover:from-amber-500 hover:to-yellow-600 hover:shadow">
                                 {{ __('Premium') }}</span>
-                        </x-nav-link
+                        </x-nav-link>
                     @endif
                     @if (auth()->id() === 1 || auth()->id() === 1002)
                         <!-- <x-nav-link :href="route('articles.create')" :active="request()->routeIs('articles.create')">
