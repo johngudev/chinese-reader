@@ -13,7 +13,7 @@
 
     $helpClass = $theme === 'dark' ? 'text-white/70' : 'text-gray-500';
 
-    $chipBase = 'inline-flex items-center rounded-full border-2 px-2 py-1 text-[12px] font-semibold transition';
+    $chipBase = 'inline-flex items-center rounded-full border-2 px-2 py-1 text-[13px] font-semibold transition';
 
     // NOTE: keep these as complete literal class strings so Tailwind's
     // content scanner can see them (don't build them from fragments).
