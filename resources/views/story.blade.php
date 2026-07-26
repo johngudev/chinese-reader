@@ -64,44 +64,28 @@
                     <x-chinese-passage-article :story="$story" :definitions="$definitions" :chinese="$chinese" :english="$english" :textId="$textId" :savedWords="$savedWords" :is-owner="$isOwner ?? false"/>
 
                     @auth
-                    @if (auth()->user()->isPremium())
-                        {{-- Footer / actions for Premium --}}
-                        <div class="no-print flex flex-col items-center gap-4 border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12">
-                            <span class="text-sm text-gray-500">
-                                {{ preg_match_all('/\p{Han}/u', $story) }} Chinese characters are in this text.
-                            </span>
-
-                            <form method="POST" action="{{ url('/generate') }}"
-                                onsubmit="document.getElementById('loading-modal').classList.remove('hidden')"
-                                class="flex w-full flex-col items-center gap-3">
-                                @csrf
-
-                                <x-text-type-fieldset theme="light" />
-
-                                <x-advanced-options theme="light" />
-
-                                <button type="submit"
-                                    class="inline-flex w-72 max-w-full items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                                    生成新故事 · Generate another text
-                                </button>
-                            </form>
-                        </div>
-                    @else
-                    {{-- Footer / actions for Free versino--}}
-                    <div class="no-print flex items-center justify-center sm:justify-between border-t border-gray-100 bg-gray-50 px-8 py-4 sm:px-12">
-                        <span class="text-sm text-gray-500 hidden sm:inline">
+                    {{-- Footer / actions — one shape for free and premium. The
+                         controls render locked for free users. --}}
+                    <div class="no-print flex flex-col items-center gap-4 border-t border-gray-100 bg-gray-50 px-8 py-6 sm:px-12">
+                        <span class="text-sm text-gray-500">
                             {{ preg_match_all('/\p{Han}/u', $story) }} Chinese characters are in this text.
                         </span>
+
                         <form method="POST" action="{{ url('/generate') }}"
-                            onsubmit="document.getElementById('loading-modal').classList.remove('hidden')">
+                            onsubmit="document.getElementById('loading-modal').classList.remove('hidden')"
+                            class="flex w-full flex-col items-center gap-3">
                             @csrf
+
+                            <x-text-type-fieldset theme="light" :locked="! auth()->user()->isPremium()" />
+
+                            <x-advanced-options theme="light" :locked="! auth()->user()->isPremium()" />
+
                             <button type="submit"
-                                class="max-w-sm inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                                class="inline-flex w-72 max-w-full items-center justify-center rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 生成新故事 · Generate another text
                             </button>
                         </form>
                     </div>
-                    @endif
                     @else
                     {{-- Footer / CTA for guests --}}
                     <div class="no-print flex flex-col items-center gap-3 border-t border-gray-100 bg-gray-50 px-8 py-6 text-center sm:px-12">
@@ -135,11 +119,11 @@
                             class="mt-2 flex w-full flex-col items-center gap-3">
                             @csrf
 
-                            @if (auth()->check() && auth()->user()->isPremium())
-                                <x-text-type-fieldset theme="dark" />
+                            @auth
+                                <x-text-type-fieldset theme="dark" :locked="! auth()->user()->isPremium()" />
 
-                                <x-advanced-options theme="dark" />
-                            @endif
+                                <x-advanced-options theme="dark" :locked="! auth()->user()->isPremium()" />
+                            @endauth
 
                             <button type="submit"
                                 class="inline-flex w-72 max-w-full items-center justify-center rounded-lg bg-white px-6 py-2.5 font-semibold text-indigo-600 shadow-sm transition hover:-translate-y-0.5 hover:bg-gray-100">

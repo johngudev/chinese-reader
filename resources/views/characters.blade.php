@@ -96,10 +96,8 @@
                         class="hidden"
                         placeholder="">{{ implode(' ', $characters) }}</textarea>
 
-                        @if (auth()->user()->isPremium())
-                            <x-text-type-fieldset theme="dark" class="mx-auto mt-2" />
-                            <x-advanced-options theme="dark" class="mx-auto mt-4" />
-                        @endif
+                        <x-text-type-fieldset theme="dark" class="mx-auto mt-2" :locked="! auth()->user()->isPremium()" />
+                        <x-advanced-options theme="dark" class="mx-auto mt-2" :locked="! auth()->user()->isPremium()" />
 
                         <button type="submit"
                             onclick="document.getElementById('loading-modal').classList.remove('hidden')"
