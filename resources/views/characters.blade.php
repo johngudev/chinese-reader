@@ -98,7 +98,7 @@
 
                         @if (auth()->user()->isPremium())
                             <x-text-type-fieldset theme="dark" class="mx-auto mt-2" />
-                            <x-advanced-options theme="dark" class="mx-auto mt-2" />
+                            <x-advanced-options theme="dark" class="mx-auto mt-4" />
                         @endif
 
                         <button type="submit"
