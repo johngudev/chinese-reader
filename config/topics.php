@@ -409,7 +409,7 @@ $theme_chips = [
     ],
 
     'school_life' => [
-        'label'  => '🏫 School & Daily Life',
+        'label'  => '🏫 School',
         'topics' => [
             'my school', 'my Chinese class', 'a small test', 'my classmates',
             'getting up in the morning', 'a busy day', 'doing homework',
