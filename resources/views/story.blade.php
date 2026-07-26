@@ -78,6 +78,8 @@
 
                                 <x-text-type-fieldset theme="light" />
 
+                                <x-theme-chips theme="light" />
+
                                 <x-advanced-options theme="light" />
 
                                 <button type="submit"
@@ -137,6 +139,8 @@
 
                             @if (auth()->check() && auth()->user()->isPremium())
                                 <x-text-type-fieldset theme="dark" />
+
+                                <x-theme-chips theme="dark" />
 
                                 <x-advanced-options theme="dark" />
                             @endif

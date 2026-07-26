@@ -386,6 +386,149 @@ $news_topics = [
     "Olympics",
 ];
 
+/*
+|--------------------------------------------------------------------------
+| Theme chips
+|--------------------------------------------------------------------------
+| Curated subjects a premium learner can pick for a single generation.
+| Each chip carries a POOL of phrasings so picking the same chip twice
+| doesn't produce the same text.
+|
+| Labels are title case — every word capitalised except prepositions and
+| articles — and carry the emoji as part of the string, so the chip
+| renders as a single text node.
+*/
+
+$theme_chips = [
+    'family_friends' => [
+        'label'  => '👨‍👩‍👧 Family & Friends',
+        'topics' => [
+            'my family', 'my mom and dad', 'a good friend', 'meeting a friend',
+            'a meal with the family', 'my grandparents', 'a friend’s birthday',
+        ],
+    ],
+
+    'school_life' => [
+        'label'  => '🏫 School & Daily Life',
+        'topics' => [
+            'my school', 'my Chinese class', 'a small test', 'my classmates',
+            'getting up in the morning', 'a busy day', 'doing homework',
+        ],
+    ],
+
+    'work_life' => [
+        'label'  => '💼 Work & Daily Life',
+        'topics' => [
+            'my work', 'a day at the office', 'a new job', 'working from home',
+            'a busy week at work', 'coming home after work', 'a meeting with my boss',
+        ],
+    ],
+
+    'life_in_china' => [
+        'label'  => '🏮 Life in China',
+        'topics' => [
+            'living in a Chinese city', 'a day in Beijing', 'food in China',
+            'taking the train in China', 'a Chinese festival',
+            'people in a park in China', 'shopping in a Chinese market',
+        ],
+    ],
+
+    'news_politics' => [
+        'label'  => '📰 News & Politics',
+        'topics' => [
+            'something in the news today', 'the leader of a country',
+            'a big meeting between countries', 'people voting', 'a new law',
+            'a change in a big city',
+        ],
+    ],
+
+    'culture_history' => [
+        'label'  => '🏛 Culture & History',
+        'topics' => [
+            'an old city', 'a famous person from long ago', 'an old building',
+            'a story from history', 'how people lived long ago', 'an old song',
+        ],
+    ],
+
+    'science_nature' => [
+        'label'  => '🌱 Science & Nature',
+        'topics' => [
+            'animals in the forest', 'the sea', 'why the weather changes',
+            'a plant growing', 'the moon and the stars', 'water and rain',
+            'a mountain',
+        ],
+    ],
+
+    'business_tech' => [
+        'label'  => '💻 Business & Tech',
+        'topics' => [
+            // 'a new phone', 'a big company', 'buying and selling things',
+            // 'using the internet every day', 'a machine that helps people',
+            // 'a small shop that grew big',
+            'Business and Technology'
+        ],
+    ],
+
+    'books_movies' => [
+        'label'  => '📚 Books & Movies',
+        'topics' => [
+            // Books
+            'the book Journey to the West (西游记)',
+            'the book Harry Potter',
+            'the book The Little Prince (小王子)',
+            'the book Charlotte’s Web',
+            'the book Romance of the Three Kingdoms (三国演义)',
+            'the book The Old Man and the Sea',
+            'the book Robinson Crusoe',
+            'the book Alice in Wonderland',
+            'the book The Lord of the Rings',
+            'the Sherlock Holmes books',
+            'the book Pride and Prejudice',
+            'the book To Live (活着)',
+            'the book Water Margin (水浒传)',
+            'the book Around the World in Eighty Days',
+            'the book The Wizard of Oz',
+            'Aesop’s fables',
+            'One Thousand and One Nights',
+            'the book Dream of the Red Chamber (红楼梦)',
+            'the book Charlie and the Chocolate Factory',
+            'the book Twenty Thousand Leagues Under the Sea',
+
+            // Movies
+            'the movie The Lion King',
+            'the movie Titanic',
+            'the movie Kung Fu Panda',
+            'the movie Spirited Away (千与千寻)',
+            'the movie Finding Nemo',
+            'the movie Toy Story',
+            'the movie Frozen',
+            'the movie Forrest Gump',
+            'the movie E.T.',
+            'the movie Jurassic Park',
+            'the movie Home Alone',
+            'the movie The Sound of Music',
+            'the movie Mulan (花木兰)',
+            'the movie Star Wars',
+            'the movie Superman',
+            'the movie Spider-Man',
+            'the movie Up',
+            'the movie WALL-E',
+            'the movie Zootopia',
+            'the movie My Neighbor Totoro (龙猫)',
+            'the movie Crouching Tiger, Hidden Dragon (卧虎藏龙)',
+            'the movie The Wandering Earth (流浪地球)',
+            'the movie Ne Zha (哪吒)',
+            'the movie Modern Times',
+            'the movie King Kong',
+            'the movie Back to the Future',
+            'the movie The Karate Kid',
+            'the movie Ratatouille',
+            'the movie Avatar',
+            'the movie Jaws',
+        ],
+    ],
+];
+
 return [
     'forms' => $forms,
     'tones' => $tones,
@@ -393,4 +536,5 @@ return [
     'easy_topics' => $easy_topics,
     'easy_forms' => $easy_forms,
     'news_topics' => $news_topics,
+    'theme_chips' => $theme_chips,
 ];

@@ -89,6 +89,9 @@ Route::post('/generate', function () {
 
     $variety = $user->isPremium() ? request('variety') : null;
 
+    // Theme chip (premium, curated list in config/topics.php).
+    $theme = $user->isPremium() ? request('theme') : null;
+
     // ── Focus words (premium, Advanced box) ────────────────
     $focusWords = [];
     if ($user->isPremium() && request('focus_words')) {
@@ -109,8 +112,8 @@ Route::post('/generate', function () {
         }
     }
 
-    $response = getStoryFromAnthropic($user->id, $characters, $variety, $focusWords);
-    
+    $response = getStoryFromAnthropic($user->id, $characters, $variety, $focusWords, $theme);
+
 
     $charList = implode(' ', $characters);
 

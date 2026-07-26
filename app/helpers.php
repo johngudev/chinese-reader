@@ -82,12 +82,24 @@ if (! function_exists('getDefinitions')) {
 }
 
 if (! function_exists('getStoryFromAnthropic')) {
-    function getStoryFromAnthropic($userId, $characters, $variety = null, array $focusWords = []) {
-
+    function getStoryFromAnthropic($userId, $characters, $variety = null, array $focusWords = [], $themeKey = null) {
         $char_diversity_note = "";
 
         if($variety == 'surprise') {
             $variety = ['news', 'article', 'story', 'dialogue'][rand(0, 3)];
+        }
+
+        // ── Theme chip → one topic from that chip's pool ───────────────
+        // An unknown key (stale form, hand-rolled POST) resolves to no
+        // theme. The UI is not trusted.
+        $themeTopic = null;
+
+        if ($themeKey) {
+            $chip = config("topics.theme_chips.{$themeKey}");
+
+            if ($chip) {
+                $themeTopic = $chip['topics'][array_rand($chip['topics'])];
+            }
         }
 
         // Premium: explicit style choice
@@ -224,6 +236,25 @@ if (! function_exists('getStoryFromAnthropic')) {
 
         $char_diversity_note .= " FINAL RULE, overriding every suggestion above: if the suggested topic, form, or style cannot be expressed using ONLY the listed characters, ignore that suggestion and write about something the characters CAN express. The character list always wins.";
 
+
+        //Theme-based char diversity note overrides everything else
+        if ($themeTopic) {
+            $styleMap = [
+                'news'     => ' The text should resemble a news story. When creating your response, go out and think of actual current news from the last year or so.  Because the Chinese portion of the text is meant to be geared towards learners, you MUST use english when referencing proper nouns like nations, and names of people, the names of companies and organizations, and even event names like "World Cup". Keep the news varied and focus on big news events.  This can include news about for example prominent figures in music, culture, politics, busines, technology and other prominent figures and events in various fields.',
+                'article'  => ' The text should resemble an informational/encyclopedia-style article rather than a narrative.',
+                'story'    => ' The text should be a short narrative story.',
+                'dialogue' => ' The text should be a short, natural dialogue between two people. No need to narration like: "He said, XYZ" or "XYZ, she responded."  Just have the words that are spoken between the interlocutors, separated by linebreaks. ' ,
+            ];
+
+            if ($variety && isset($styleMap[$variety])) {
+                $char_diversity_note = $styleMap[$variety];
+            }
+        
+            // The learner asked for this explicitly, so it is not subject
+            // to the diversityChance roll, and it applies whether or not a
+            // text type was also chosen.
+            $char_diversity_note .= " For THIS text, write about {$themeTopic}. You must feature {$themeTopic} in some way.";
+        }
 
         //throttle request to max first 1,0000 characters
 
