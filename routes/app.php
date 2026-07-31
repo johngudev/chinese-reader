@@ -112,10 +112,13 @@ Route::post('/generate', function () {
         }
     }
 
-    // ── Remember the Advanced panel state ──────────────────────────
+    // ── Remember the Advanced panel state and Focus Words ──────────────────────────
     // Saved before the API call so it survives even if generation throws.
     $user->update([
         'panel_advanced_open' => request()->boolean('advanced_panel_open'), //updates to false if no value sent
+        'panel_focus_words'   => request('focus_words') 
+                                ? mb_substr(request('focus_words'), 0, 500)
+                                : null, //get focus words from request, truncate to 500 chars, or null if empty
     ]);
 
 

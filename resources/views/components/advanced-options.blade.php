@@ -32,6 +32,9 @@
 
     // Saved generation-form state (null for guests / never-saved users).
     $open = (bool) auth()->user()?->panel_advanced_open;
+
+    // Get focus words from user
+    $focusWords = request('focus_words', auth()->user()?->panel_focus_words ?? '');
 @endphp
 
 <details {{ $attributes->merge(['class' => 'w-full']) }} @if($open) open @endif 
@@ -76,7 +79,7 @@
         @else
             <textarea name="focus_words" id="focus_words" rows="2"
                 placeholder="学习, 朋友, 天气"
-                class="mt-2 w-full resize-y rounded-lg py-4 text-sm shadow-sm {{ $inputClass }}">{{ request('focus_words') }}</textarea>
+                class="mt-2 w-full resize-y rounded-lg py-4 text-sm shadow-sm {{ $inputClass }}">{{ $focusWords }}</textarea>
         @endif
     </div>
 </details>
