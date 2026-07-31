@@ -24,6 +24,9 @@ class User extends Authenticatable
         'email',
         'country',
         'password',
+        'panel_advanced_open',
+        'panel_theme',
+        'panel_focus_words',
     ];
 
     /**
@@ -43,6 +46,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'panel_advanced_open' => 'boolean',
     ];
 
     /**
