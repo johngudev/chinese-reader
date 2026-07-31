@@ -112,6 +112,13 @@ Route::post('/generate', function () {
         }
     }
 
+    // ── Remember the Advanced panel state ──────────────────────────
+    // Saved before the API call so it survives even if generation throws.
+    $user->update([
+        'panel_advanced_open' => request()->boolean('advanced_panel_open'), //updates to false if no value sent
+    ]);
+
+
     $response = getStoryFromAnthropic($user->id, $characters, $variety, $focusWords, $theme);
 
 

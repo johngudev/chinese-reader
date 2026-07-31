@@ -29,12 +29,20 @@
     $noteLinkClass = $theme === 'dark'
         ? 'underline decoration-white/40 underline-offset-2 hover:decoration-white'
         : 'text-indigo-700 underline decoration-indigo-300 underline-offset-2 hover:decoration-indigo-600';
+
+    // Saved generation-form state (null for guests / never-saved users).
+    $open = (bool) auth()->user()?->panel_advanced_open;
 @endphp
 
-<details {{ $attributes->merge(['class' => 'w-full']) }}>
+<details {{ $attributes->merge(['class' => 'w-full']) }} @if($open) open @endif 
+    ontoggle="const i = this.querySelector('[name=advanced_panel_open]'); if (i) i.value = this.open ? 1 : 0;">
+
     <summary class="cursor-pointer select-none text-center text-[11px] font-semibold uppercase tracking-[0.2em] {{ $legendClass }}">
         Advanced &#9662;@if ($locked) <span class="ml-2 inline-flex items-center rounded-full px-2 py-0.5 text-[10px] font-semibold normal-case tracking-normal align-middle {{ $badgeClass }}">🔒 Premium</span> @endif
     </summary>
+
+    <!-- used to track if the advanced options panel is open  and connected to alpine via parent <details> tag-->
+    <input type="hidden" name="advanced_panel_open" value="{{ $open ? 1 : 0 }}">
 
     <div class="mt-2 rounded-xl border-2 px-4 py-3 text-left md:px-12 {{ $boxClass }}">
         @if ($locked)
