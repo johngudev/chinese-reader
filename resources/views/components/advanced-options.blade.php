@@ -55,7 +55,6 @@
             </div>
         @endif
 
-        <x-theme-chips :theme="$theme" :locked="$locked" />
 
         <div class="my-3 h-px {{ $ruleClass }}"></div>
 
