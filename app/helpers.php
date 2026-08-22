@@ -82,7 +82,7 @@ if (! function_exists('getDefinitions')) {
 }
 
 if (! function_exists('getStoryFromAnthropic')) {
-    function getStoryFromAnthropic($userId, $characters, $variety = null, array $focusWords = [], $themeKey = null) {
+    function getStoryFromAnthropic($userId, $characters, $variety = null, array $focusWords = [], $themeKey = null, $subject = null) {
         $char_diversity_note = "";
 
         if($variety == 'surprise') {
@@ -254,6 +254,21 @@ if (! function_exists('getStoryFromAnthropic')) {
             // to the diversityChance roll, and it applies whether or not a
             // text type was also chosen.
             $char_diversity_note .= " For THIS text, write about {$themeTopic}. You must feature {$themeTopic} in some way.";
+        }
+
+        if ($subject) {
+
+            $char_diversity_note = " The topic of THIS text should be [{$subject}].";
+
+            // Focus words: user-chosen words that MUST appear; their characters are
+            // permitted even if outside the known-characters list.
+            if (! empty($focusWords)) {
+                $focusList = implode('、', $focusWords);
+
+                $char_diversity_note .= " IMPORTANT: You MUST use at least one of these focus words"
+                    . " in the Chinese text: {$focusList}.";
+            }
+
         }
 
         //throttle request to max first 1,0000 characters

@@ -49,8 +49,8 @@
                     <li class="flex items-start gap-3 rounded-xl bg-white px-4 py-3.5 shadow-sm ring-1 ring-line transition hover:shadow-md">
                         <span class="shrink-0 font-serifsc text-xl leading-none text-seal">✓</span>
                         <span class="text-sm text-gray-700">
-                            <strong class="font-semibold text-gray-900">Choose your text style</strong><br>
-                            <span class="text-gray-500">New text generation options: stories, articles, dialogues.</span>
+                            <strong class="font-semibold text-gray-900">Customize your text </strong><br>
+                            <span class="text-gray-500">Boost your learning by describing what kind of texts you want to read.</span>
                         </span>
                     </li>
                     <li class="flex items-start gap-3 rounded-xl bg-white px-4 py-3.5 shadow-sm ring-1 ring-line transition hover:shadow-md">
@@ -95,7 +95,7 @@
                         </p>
 
                         <p class="mt-2 text-sm text-gray-600">
-                            <span class="font-semibold text-gray-900">$96</span> a year, billed monthly
+                            Switch to annual anytime.
                         </p>
 
                         <p class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-500 ring-1 ring-line">
@@ -114,7 +114,6 @@
                         </form>
 
                         <p class="mt-3 text-center text-xs text-gray-400">
-                            Switch to annual anytime.
                         </p>
                     </div>
 
@@ -158,7 +157,6 @@
                         </form>
 
                         <p class="mt-3 text-center text-xs text-gray-400">
-                            Two months of reading, free.
                         </p>
                     </div>
                 </div>

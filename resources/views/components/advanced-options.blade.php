@@ -50,12 +50,12 @@
     <div class="mt-2 rounded-xl border-2 px-4 py-3 text-left md:px-12 {{ $boxClass }}">
         @if ($locked)
             <div class="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 rounded-lg px-3 py-2 text-xs ring-1 {{ $noteClass }}">
-                <span class="font-semibold">🔒 Themes and Focus Words are Premium.</span>
+                <span class="font-semibold">🔒 Topics and Focus Words are Premium.</span>
                 <a href="{{ route('premium') }}" class="font-semibold {{ $noteLinkClass }}">升级 · Upgrade to unlock →</a>
             </div>
         @endif
 
-        <x-topic-input :theme="$theme" />
+        <x-topic-input :theme="$theme" :locked="$locked" />
 
         <div class="my-3 h-px {{ $ruleClass }}"></div>
 
