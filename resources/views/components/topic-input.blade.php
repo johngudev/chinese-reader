@@ -214,10 +214,12 @@
 @endphp
 
 <div {{ $attributes->merge(['class' => 'w-full']) }} data-topic-input>
-    <label @unless($locked) for="topic" @endunless class="block text-xs font-semibold uppercase tracking-[0.15em]">
-        Describe the text &middot; 主题
+    <label @unless($locked) for="topic" @endunless class="mt-2 block text-xs font-semibold uppercase tracking-[0.15em]">
+        Topic &middot; 主题
     </label>
-
+    <p class="mt-1 text-xs {{ $helpClass }}">
+        Describe the text you want to generate.
+    </p>
     @if ($locked)
         <div class="group relative mt-2 flex w-full items-center gap-2">
             <input type="text" disabled maxlength="160"
