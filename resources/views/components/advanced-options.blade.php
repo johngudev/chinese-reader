@@ -55,6 +55,7 @@
             </div>
         @endif
 
+        <x-topic-input :theme="$theme" />
 
         <div class="my-3 h-px {{ $ruleClass }}"></div>
 
