@@ -213,7 +213,7 @@
     $placeholder = 'e.g. two friends at a restaurant, a funny story about a cat, daily life in Beijing';
 @endphp
 
-<div {{ $attributes->merge(['class' => 'w-full']) }} data-topic-input>
+<div {{ $attributes->merge(['class' => 'w-full mt-5']) }} data-topic-input>
     <label @unless($locked) for="topic" @endunless class="mt-2 block text-xs font-semibold uppercase tracking-[0.15em]">
         Topic &middot; 主题
     </label>
