@@ -35,7 +35,7 @@ return [
 
     'lifetime_pro_ids'          => [1, 425, 588, 402, 118, 683, 1179],
 
-    'free_daily_generation_cap' => 5,
+    'free_daily_generation_cap' => 3,
 
     // Ceiling on a user's characters list. Matches the array_slice cap the
     // guest generation path in routes/web.php already applies.
