@@ -90,7 +90,7 @@
 
                         <p class="text-xs font-medium uppercase tracking-wide text-gray-400">flat</p>
                         <p class="flex items-baseline gap-1.5">
-                            <span class="font-serifsc text-5xl font-bold text-gray-900">$8</span>
+                            <span class="font-serifsc text-5xl font-bold text-gray-900">$5</span>
                             <span class="text-base font-medium text-gray-400">/ month</span>
                         </p>
 
@@ -109,7 +109,7 @@
                             <button type="submit"
                                 onclick="gtag('event', 'upgrade_click', { plan: 'monthly', transport_type: 'beacon' })"
                                 class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-seal px-6 py-3.5 text-lg font-semibold text-white shadow-md transition hover:bg-seal-deep hover:shadow-lg">
-                                升级 · Go monthly — $8
+                                升级 · Go monthly — $5
                             </button>
                         </form>
 
@@ -132,18 +132,18 @@
 
                         <p class="text-xs font-medium uppercase tracking-wide text-gray-400">FLAT</p>
                         <p class="flex items-baseline gap-1.5">
-                            <span class="font-serifsc text-5xl font-bold text-gray-900">$50</span>
+                            <span class="font-serifsc text-5xl font-bold text-gray-900">$39</span>
                             <span class="text-base font-medium text-gray-400">/ year</span>
                         </p>
 
                         <p class="mt-2 text-sm text-gray-600">
-                            <span class="font-semibold text-gray-900">$4.20</span> per month
-                            <!-- <span class="text-gray-400 line-through decoration-seal/50 decoration-2">$96</span> -->
+                            <span class="font-semibold text-gray-900">$3.25</span> per month
+                            <!-- <span class="text-gray-400 line-through decoration-seal/50 decoration-2">$60</span> -->
                         </p>
 
                         <p class="mt-3 inline-flex items-center gap-1.5 rounded-full bg-seal/10 px-3 py-1 text-xs font-semibold text-seal ring-1 ring-seal/20">
                             <span class="font-serifsc leading-none">省</span>
-                            Save nearly 50% vs monthly
+                            Save 35% vs monthly
                         </p>
 
                         <form method="POST" action="{{ route('subscribe') }}" class="mt-5">
@@ -152,7 +152,7 @@
                             <button type="submit"
                                 onclick="gtag('event', 'upgrade_click', { plan: 'annual', transport_type: 'beacon' })"
                                 class="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-seal px-6 py-3.5 text-lg font-semibold text-white shadow-md transition hover:bg-seal-deep hover:shadow-lg">
-                                升级 · Get a year — $50
+                                升级 · Get a year — $39
                             </button>
                         </form>
 
